@@ -6,17 +6,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import com.example.itemreminder.R
-import com.example.itemreminder.viewModel.RegistrationViewModel
-import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_signup.*
 
-class SignupFragment : Fragment() {
-
-    private val registrationViewModel: RegistrationViewModel by activityViewModels()
+class SignupFragment(private val sharedPreferences: SharedPreferences) : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,11 +19,11 @@ class SignupFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        requireActivity().signup_username.setText(registrationViewModel.currentEmail)
-        requireActivity().signup_username.addTextChangedListener { registrationViewModel.currentEmail = it.toString() }
+        signup_button.setOnClickListener { createUser() }
+        signin_text.setOnClickListener { parentFragmentManager.beginTransaction().remove(this).commit()}
     }
 
-    fun createUser(sharedPreferences: SharedPreferences) {
+    private fun createUser() {
         var usersNumber = sharedPreferences.getInt("usersNumber", -1)
         val save = sharedPreferences.edit()
         if (signup_username?.text.toString().length>3 && signup_username?.text.toString()!="" && signup_password1?.text.toString()==signup_password2?.text.toString() && signup_password1?.text.toString()!="" && signup_password1?.text.toString().length>3) {
@@ -39,9 +32,7 @@ class SignupFragment : Fragment() {
             save.putString("password+${usersNumber}", signup_password1?.text.toString()).apply()
             save.putInt("usersNumber", usersNumber).apply()
             error_text?.text = ""
-            signup_username?.setText("")
-            signup_password1?.setText("")
-            signup_password2?.setText("")
+            parentFragmentManager.beginTransaction().remove(this).commit()
         }
         else
             error_text.text = "enter valid username or password"

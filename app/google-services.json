@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:584887527650:android:cae8ef9a71f6a2eea2d6bb",
+        "mobilesdk_app_id": "1:584887527650:android:5d9ddec14db44a44a2d6bb",
         "android_client_info": {
-          "package_name": "com.example.ItemReminder"
+          "package_name": "com.example.itemreminder"
         }
       },
       "oauth_client": [
@@ -17,7 +17,44 @@
           "client_id": "584887527650-qnosu7n4ej0pn1gjkloe821f0537csov.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.ItemReminder",
+            "package_name": "com.example.itemreminder",
+            "certificate_hash": "426dbf7e40779611427d1456d14472b5804c1f1a"
+          }
+        },
+        {
+          "client_id": "584887527650-i379r4vecc5d9443083je7rhbljv68su.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6-13shqAwJwD0DHeTfPHrRwNdmTgTZPQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "584887527650-i379r4vecc5d9443083je7rhbljv68su.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:584887527650:android:5d9ddec14db44a44a2d6bb",
+        "android_client_info": {
+          "package_name": "com.example.itemreminder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "584887527650-6d5ih8krv7nn1hflgb8dsoavq8kqcpbu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.itemreminder",
             "certificate_hash": "426dbf7e40779611427d1456d14472b5804c1f1a"
           }
         },

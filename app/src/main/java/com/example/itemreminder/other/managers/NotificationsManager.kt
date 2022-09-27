@@ -9,7 +9,7 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.itemreminder.R
-import com.example.itemreminder.view.activities.RegisterActivity
+import com.example.itemreminder.view.activities.LoginActivity
 
 object NotificationsManager {
 
@@ -36,7 +36,7 @@ object NotificationsManager {
     }
 
     fun serviceNotification(context: Context): Notification {
-        val sendIntent = PendingIntent.getActivity(context, 0, Intent(context, RegisterActivity::class.java), PendingIntent.FLAG_MUTABLE)
+        val sendIntent = PendingIntent.getActivity(context, 0, Intent(context, LoginActivity::class.java), PendingIntent.FLAG_MUTABLE)
         createNotificationChanel(context)
         return NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle("Service Notification")
