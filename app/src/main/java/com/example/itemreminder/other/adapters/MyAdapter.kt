@@ -15,7 +15,8 @@ import com.bumptech.glide.Glide
 import com.example.itemreminder.model.Item
 import com.example.itemreminder.model.database.Repository
 import com.example.itemreminder.R
-import kotlin.concurrent.thread
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MyAdapter(private val dataList: MutableList<Item>,
                 private val context: Context,
@@ -75,7 +76,7 @@ class MyAdapter(private val dataList: MutableList<Item>,
         alertBuilder.setMessage("You Will Delete '${dataList[position].name}':  ")
         alertBuilder.setNeutralButton("Cancel") { dialogInterface: DialogInterface, i: Int -> }
         alertBuilder.setPositiveButton("Delete") { dialogInterface: DialogInterface, i: Int ->
-            thread(start = true) { Repository.getInstance(context).deleteItem(dataList[position]) }
+            GlobalScope.launch { Repository.getInstance(context).deleteItem(dataList[position]) }
             notifyItemRemoved(position)
         }
         alertBuilder.show()

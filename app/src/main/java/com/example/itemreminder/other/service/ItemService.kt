@@ -4,7 +4,8 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import com.example.itemreminder.other.managers.NotificationsManager
-import kotlin.concurrent.thread
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class ItemService: Service() {
 
@@ -20,7 +21,7 @@ class ItemService: Service() {
     }
 
     private fun startService() {
-        thread (start = true) {
+        GlobalScope.launch {
             while (true) {
                 Thread.sleep(5000)
             }

@@ -20,6 +20,8 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
 
@@ -35,14 +37,14 @@ class LoginActivity : AppCompatActivity() {
                 content -> googleIntentResult(content)
         }
         sharedPreferences = getSharedPreferences(R.string.app_name.toString(), MODE_PRIVATE)
-        //lastSignin()
+        lastSignin()
         signIn()
     }
 
     private fun lastSignin() {
         var lastSignin = sharedPreferences.getLong("LAST_LOGIN", -1)
         val intent = Intent(this, ItemsActivity::class.java)
-        if (lastSignin != -1L && System.currentTimeMillis()-lastSignin < 30000) // 60000 ms = 60 sec
+        if (lastSignin != -1L && System.currentTimeMillis()-lastSignin < 60000) // 60000 ms = 60 sec
             startActivity(intent)
     }
 
@@ -70,6 +72,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     /*-----------------------------------------------------------------*/
+
     private val firebase = FirebaseAuth.getInstance()
     private fun startLogin() {
         val serviceIntent = Intent(this, ItemService::class.java)
@@ -92,7 +95,7 @@ class LoginActivity : AppCompatActivity() {
                     registerToFirebase(googleSignInAccount)
                 }
                 else
-                    openApp() // googleSignInAccount.displayName.toString()
+                    openApp()
 
             }
             .addOnFailureListener { displayToast("Failed on Firebase") }

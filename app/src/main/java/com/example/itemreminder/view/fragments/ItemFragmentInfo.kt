@@ -7,7 +7,8 @@ import com.example.itemreminder.R
 import com.example.itemreminder.other.adapters.InfoAdapter
 import com.example.itemreminder.model.database.Repository
 import kotlinx.android.synthetic.main.fruit_info_fragment.*
-import kotlin.concurrent.thread
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class ItemFragmentInfo(private val item: Item, context: Context): Fragment(R.layout.fruit_info_fragment) {
 
@@ -17,7 +18,7 @@ class ItemFragmentInfo(private val item: Item, context: Context): Fragment(R.lay
         infoRecyclerView()
         add_button?.setOnClickListener {
             item.info += add_text?.text.toString() + ','
-            thread(start = true) { Repository.getInstance(context).updateItemInfo(item, item.info) }
+            GlobalScope.launch { Repository.getInstance(context).updateItemInfo(item, item.info) }
             add_text?.setText("")
             infoRecyclerView()
         }

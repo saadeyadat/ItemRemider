@@ -30,8 +30,7 @@
 
         <activity
             android:name="com.example.itemreminder.view.activities.ItemsActivity"
-            android:exported="false"
-            android:noHistory="true">
+            android:exported="false">
         </activity>
 
         <service

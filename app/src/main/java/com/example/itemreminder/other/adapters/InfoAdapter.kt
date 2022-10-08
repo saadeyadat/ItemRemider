@@ -12,7 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.itemreminder.model.Item
 import com.example.itemreminder.R
 import com.example.itemreminder.model.database.Repository
-import kotlin.concurrent.thread
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class InfoAdapter(private val item: Item, private val context: Context?): RecyclerView.Adapter<InfoAdapter.ViewHolder>() {
 
@@ -50,7 +51,7 @@ class InfoAdapter(private val item: Item, private val context: Context?): Recycl
         alertBuilder.setPositiveButton("Delete") { dialogInterface: DialogInterface, i: Int ->
             infoList.removeAt(holder.layoutPosition)
             item.info = infoList.joinToString(",") // covert back the list to string to save it in the database
-            thread(start = true) { Repository.getInstance(context).updateItemInfo(item, item.info) }
+            GlobalScope.launch { Repository.getInstance(context).updateItemInfo(item, item.info) }
             notifyItemRemoved(position)
         }
         alertBuilder.show()
