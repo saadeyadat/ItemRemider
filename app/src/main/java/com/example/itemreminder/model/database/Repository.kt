@@ -3,10 +3,12 @@ package com.example.itemreminder.model.database
 import android.content.Context
 import androidx.lifecycle.LiveData
 import com.example.itemreminder.model.Item
+import com.example.itemreminder.model.User
 
 class Repository private constructor(application: Context?) {
 
-    private val fruitDao = ItemDatabase.getDatabase(application).getFruitDao()
+    private val itemDao = AppDatabase.getDatabase(application).getItemDao()
+    private val userDao = AppDatabase.getDatabase(application).getUserDao()
 
     companion object {
         private lateinit var instance: Repository
@@ -18,15 +20,15 @@ class Repository private constructor(application: Context?) {
     }
 
     fun addItem(item: Item) {
-        fruitDao.insertFruit(item)
+        itemDao.addItem(item)
     }
 
     fun deleteItem(item: Item) {
-        fruitDao.deleteFruit(item)
+        itemDao.deleteItem(item)
     }
 
     private fun updateItem(item: Item) {
-        fruitDao.updateFruit(item)
+        itemDao.updateItem(item)
     }
 
     fun updateItemInfo(item: Item, info: String) {
@@ -40,6 +42,10 @@ class Repository private constructor(application: Context?) {
     }
 
     fun getLiveDataAllItems(): LiveData<List<Item>> {
-        return fruitDao.getAllFruits()
+        return itemDao.getAllItems()
+    }
+
+    fun addUser(user: User) {
+        userDao.addUser(user)
     }
 }

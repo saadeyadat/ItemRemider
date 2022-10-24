@@ -8,14 +8,14 @@ import com.example.itemreminder.model.Item
 interface ItemsDao {
 
     @Insert
-    fun insertFruit(item: Item)
+    fun addItem(item: Item)
 
     @Delete
-    fun deleteFruit(item: Item)
+    fun deleteItem(item: Item)
 
     @Query("Select * from fruitsTable")
-    fun getAllFruits(): LiveData<List<Item>>
+    fun getAllItems(): LiveData<List<Item>>
 
     @Update
-    fun updateFruit(item: Item)
+    fun updateItem(item: Item)
 }

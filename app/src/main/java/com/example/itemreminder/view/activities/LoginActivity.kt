@@ -10,18 +10,18 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.itemreminder.R
+import com.example.itemreminder.model.User
+import com.example.itemreminder.model.database.Repository
 import com.example.itemreminder.other.register.AppSignin
 import com.example.itemreminder.other.service.ItemService
 import com.example.itemreminder.view.fragments.SignupFragment
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.fragment_login.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlin.concurrent.thread
 
 class LoginActivity : AppCompatActivity() {
 
@@ -37,11 +37,11 @@ class LoginActivity : AppCompatActivity() {
                 content -> googleIntentResult(content)
         }
         sharedPreferences = getSharedPreferences(R.string.app_name.toString(), MODE_PRIVATE)
-        lastSignin()
+        lastSigning()
         signIn()
     }
 
-    private fun lastSignin() {
+    private fun lastSigning() {
         var lastSignin = sharedPreferences.getLong("LAST_LOGIN", -1)
         val intent = Intent(this, ItemsActivity::class.java)
         if (lastSignin != -1L && System.currentTimeMillis()-lastSignin < 60000) // 60000 ms = 60 sec
@@ -71,41 +71,59 @@ class LoginActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    /*-----------------------------------------------------------------*/
+    /*--------------------------FireBase---------------------------*/
 
     private val firebase = FirebaseAuth.getInstance()
     private fun startLogin() {
         val serviceIntent = Intent(this, ItemService::class.java)
         ContextCompat.startForegroundService(this, serviceIntent)
-        val googleOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
+        val googleOptions = GoogleSignInOptions
+            .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .build()
         val client = GoogleSignIn.getClient(this, googleOptions).signInIntent
         googleContent.launch(client)
     }
 
     private fun googleIntentResult(content: ActivityResult?) {
-        val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(content?.data)
-        task.addOnSuccessListener{ logOrSignFirebase(it) }
+        val task = GoogleSignIn.getSignedInAccountFromIntent(content?.data)
+        task.addOnSuccessListener{ checkUserExist(it) }
             .addOnFailureListener{ displayToast("Please Sign in regular") }
     }
 
-    private fun logOrSignFirebase(googleSignInAccount: GoogleSignInAccount) {
+    private fun checkUserExist(googleSignInAccount: GoogleSignInAccount) {
         firebase.fetchSignInMethodsForEmail(googleSignInAccount.email!!)
             .addOnSuccessListener {
-                if (it.signInMethods.isNullOrEmpty()) {
-                    registerToFirebase(googleSignInAccount)
+                if (it.signInMethods.isNullOrEmpty()) { // if user is not exist in the firebase, register it in all the databases.
+                    regToSharedPref(googleSignInAccount)
+                    regToDatabase(googleSignInAccount)
+                    regToFirebase(googleSignInAccount)
                 }
-                else
+                else // if user exist in firebase you can open the app.
                     openApp()
 
             }
             .addOnFailureListener { displayToast("Failed on Firebase") }
     }
 
-    private fun registerToFirebase(googleSignInAccount: GoogleSignInAccount) {
-        val credetial = GoogleAuthProvider.getCredential(googleSignInAccount.idToken, null)
-        firebase.signInWithCredential(credetial)
+
+    private fun regToFirebase(googleSignInAccount: GoogleSignInAccount) {
+        val credential = GoogleAuthProvider.getCredential(googleSignInAccount.idToken, null)
+        firebase.signInWithCredential(credential)
             .addOnSuccessListener { openApp() }
             .addOnFailureListener { displayToast("try later") }
+    }
+
+    private fun regToSharedPref(googleSignInAccount: GoogleSignInAccount) {
+        val edit = sharedPreferences.edit()
+        edit.putString("USER_EMAIL", googleSignInAccount.email).apply()
+    }
+
+    private fun regToDatabase(googleSignInAccount: GoogleSignInAccount) {
+        val name = googleSignInAccount.givenName.toString()
+        val email = googleSignInAccount.email.toString()
+        thread(start = true) { Repository.getInstance(this).addUser(User(name, email)) }
     }
 
     private fun displayToast(text: String) {
