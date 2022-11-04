@@ -6,11 +6,11 @@ import com.example.itemreminder.model.Item
 import com.example.itemreminder.R
 import com.example.itemreminder.other.adapters.InfoAdapter
 import com.example.itemreminder.model.database.Repository
-import kotlinx.android.synthetic.main.fruit_info_fragment.*
+import kotlinx.android.synthetic.main.item_fragment_info.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class ItemFragmentInfo(private val item: Item, context: Context): Fragment(R.layout.fruit_info_fragment) {
+class ItemFragmentInfo(private val item: Item, context: Context): Fragment(R.layout.item_fragment_info) {
 
     override fun onResume() {
         super.onResume()

@@ -18,11 +18,13 @@ import com.example.itemreminder.R
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class MyAdapter(private val dataList: MutableList<Item>,
+class MyAdapter(private val list: String,
+                private val dataList: MutableList<Item>,
                 private val context: Context,
-                val updateImage: (Item) -> Unit,
+                val updateImage: (Item) -> Unit, // unit is like void
                 val displayFruitFragment: (Item) -> Unit): RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
+    private var i = 0 // help to scan all dataList and print items to the correct list
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val textView: TextView
         val imageView: ImageView
@@ -35,8 +37,10 @@ class MyAdapter(private val dataList: MutableList<Item>,
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_layout, parent, false)
-        return ViewHolder(view)
+        if (dataList[i++].list == list)
+            return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.my_adapter, parent, false))
+        else
+            return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.empty_layout, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -49,6 +53,7 @@ class MyAdapter(private val dataList: MutableList<Item>,
 
         holder.delete.setOnClickListener {
             displayAlert(context, position)
+            notifyDataSetChanged()
         }
 
         holder.textView.setOnClickListener {

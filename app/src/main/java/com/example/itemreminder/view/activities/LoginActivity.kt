@@ -12,6 +12,8 @@ import androidx.core.content.ContextCompat
 import com.example.itemreminder.R
 import com.example.itemreminder.model.User
 import com.example.itemreminder.model.database.Repository
+import com.example.itemreminder.other.managers.FirebaseManager
+import com.example.itemreminder.other.managers.SharedPrefManager
 import com.example.itemreminder.other.register.AppSignin
 import com.example.itemreminder.other.service.ItemService
 import com.example.itemreminder.view.fragments.SignupFragment
@@ -20,7 +22,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.android.synthetic.main.login_activity.*
 import kotlin.concurrent.thread
 
 class LoginActivity : AppCompatActivity() {
@@ -30,7 +32,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.fragment_login)
+        setContentView(R.layout.login_activity)
         val serviceIntent = Intent(this, ItemService::class.java)
         ContextCompat.startForegroundService(this, serviceIntent)
         googleContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -50,8 +52,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun signIn() {
         signin_button.setOnClickListener {
-            if (AppSignin().checkUser(sharedPreferences, signin_username.text.toString(), signin_password.text.toString())){
-                openApp()
+            if (AppSignin(this).checkUser(sharedPreferences, signin_username.text.toString(), signin_password.text.toString())){
+                openApp(signin_username.text.toString(), signin_username.text.toString())
                 signin_username.setText("")
                 signin_password.setText("")
             }
@@ -64,10 +66,11 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun openApp() {
+    private fun openApp(email: String, name: String) {
         var editor = sharedPreferences.edit()
         editor.putLong("LAST_LOGIN", System.currentTimeMillis()).apply()
-        val intent = Intent(this, ItemsActivity::class.java)
+        val intent = Intent(this, ListsActivity::class.java)
+        intent.putExtra("email", email)
         startActivity(intent)
     }
 
@@ -101,7 +104,7 @@ class LoginActivity : AppCompatActivity() {
                     regToFirebase(googleSignInAccount)
                 }
                 else // if user exist in firebase you can open the app.
-                    openApp()
+                    openApp(googleSignInAccount.email.toString(), googleSignInAccount.givenName.toString())
 
             }
             .addOnFailureListener { displayToast("Failed on Firebase") }
@@ -111,19 +114,23 @@ class LoginActivity : AppCompatActivity() {
     private fun regToFirebase(googleSignInAccount: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(googleSignInAccount.idToken, null)
         firebase.signInWithCredential(credential)
-            .addOnSuccessListener { openApp() }
+            .addOnSuccessListener {
+                val user = User(email = googleSignInAccount.email.toString(), name = googleSignInAccount.givenName.toString())
+                FirebaseManager.getInstance(this).addUser(user)
+                openApp(googleSignInAccount.email.toString(), googleSignInAccount.givenName.toString())
+            }
             .addOnFailureListener { displayToast("try later") }
     }
 
     private fun regToSharedPref(googleSignInAccount: GoogleSignInAccount) {
-        val edit = sharedPreferences.edit()
-        edit.putString("USER_EMAIL", googleSignInAccount.email).apply()
+        val user = User(email = googleSignInAccount.email.toString(), name = googleSignInAccount.givenName.toString())
+        SharedPrefManager.getInstance(this).setUser(user)
     }
 
     private fun regToDatabase(googleSignInAccount: GoogleSignInAccount) {
         val name = googleSignInAccount.givenName.toString()
         val email = googleSignInAccount.email.toString()
-        thread(start = true) { Repository.getInstance(this).addUser(User(name, email)) }
+        thread(start = true) { Repository.getInstance(this).addUser(User(email = email, name = name)) }
     }
 
     private fun displayToast(text: String) {

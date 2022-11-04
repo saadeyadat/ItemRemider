@@ -3,6 +3,7 @@ package com.example.itemreminder.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.itemreminder.view.activities.ItemsActivity
 
 @Entity(tableName = "usersTable")
 data class User (
@@ -11,11 +12,11 @@ data class User (
     var email: String,
     @ColumnInfo(name = "name")
     var name: String,
-    //@ColumnInfo(name = "items")
-    //val items: ItemsList,
+    @ColumnInfo(name = "lists")
+    var lists: String? = null,
     @ColumnInfo(name = "image")
     val image: String? = null
 )
 {
-    constructor(): this("", "")
+    //constructor(): this("", "", ItemsList())
 }

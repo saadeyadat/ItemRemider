@@ -6,9 +6,9 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.itemreminder.model.Item
 import com.example.itemreminder.R
-import kotlinx.android.synthetic.main.fruit_fragment.*
+import kotlinx.android.synthetic.main.item_fragment.*
 
-class ItemFragment(private val item: Item, context: Context): Fragment(R.layout.fruit_fragment) {
+class ItemFragment(private val item: Item, context: Context): Fragment(R.layout.item_fragment) {
 
     private val itemFragmentInfo = ItemFragmentInfo(item, context)
     override fun onResume() {

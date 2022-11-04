@@ -1,8 +1,13 @@
 package com.example.itemreminder.other.register
 
+import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
+import androidx.lifecycle.LiveData
+import com.example.itemreminder.model.User
+import com.example.itemreminder.model.database.Repository
 
-class AppSignin {
+class AppSignin(val context: Context) {
 
     fun checkUser(sharedPreferences: SharedPreferences, username: String, password: String): Boolean {
         var result = false

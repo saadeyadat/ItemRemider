@@ -4,14 +4,16 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.itemreminder.model.Lists
 import com.example.itemreminder.model.Item
 import com.example.itemreminder.model.User
 
-@Database(entities = arrayOf(Item::class, User::class), version = 1)
+@Database(entities = arrayOf(Item::class, User::class, Lists::class), version = 1)
 abstract class AppDatabase: RoomDatabase() {
 
     abstract fun getItemDao(): ItemsDao
     abstract fun getUserDao(): UsersDao
+    abstract fun getListsDao(): ListsDao
 
     companion object {
         fun getDatabase(context: Context?): AppDatabase {

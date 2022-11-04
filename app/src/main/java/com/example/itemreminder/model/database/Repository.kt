@@ -2,6 +2,7 @@ package com.example.itemreminder.model.database
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import com.example.itemreminder.model.Lists
 import com.example.itemreminder.model.Item
 import com.example.itemreminder.model.User
 
@@ -9,6 +10,7 @@ class Repository private constructor(application: Context?) {
 
     private val itemDao = AppDatabase.getDatabase(application).getItemDao()
     private val userDao = AppDatabase.getDatabase(application).getUserDao()
+    private val listsDao = AppDatabase.getDatabase(application).getListsDao()
 
     companion object {
         private lateinit var instance: Repository
@@ -41,11 +43,28 @@ class Repository private constructor(application: Context?) {
         updateItem(item)
     }
 
-    fun getLiveDataAllItems(): LiveData<List<Item>> {
+    fun getLiveDataAllItems(): LiveData<kotlin.collections.List<Item>> {
         return itemDao.getAllItems()
+    }
+
+    fun addList(list: Lists) {
+        listsDao.addList(list)
+    }
+
+    fun getAllLists(): LiveData<List<Lists>> {
+        return listsDao.getAllLists()
     }
 
     fun addUser(user: User) {
         userDao.addUser(user)
     }
+
+    fun getAllUsers(): LiveData<kotlin.collections.List<User>> {
+        return userDao.getAllUsers()
+    }
+
+    fun updateUser(user: User) {
+        userDao.updateUser(user)
+    }
+
 }

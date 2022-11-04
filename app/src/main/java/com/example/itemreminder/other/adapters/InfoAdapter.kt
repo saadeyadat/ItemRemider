@@ -28,7 +28,7 @@ class InfoAdapter(private val item: Item, private val context: Context?): Recycl
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.info_recyclerview, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.info_adapter, parent, false)
         return ViewHolder(view)
     }
 
