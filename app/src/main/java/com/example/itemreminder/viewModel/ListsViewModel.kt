@@ -11,7 +11,7 @@ class ListsViewModel(val app: Application): AndroidViewModel(app) {
     private val repository = Repository.getInstance(app.applicationContext)
     val listsData: LiveData<List<Lists>> = repository.getAllLists()
 
-    fun addLists(lists: Lists) {
+    fun addList(lists: Lists) {
         repository.addList(lists)
     }
 }

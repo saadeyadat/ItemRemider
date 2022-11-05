@@ -62,7 +62,7 @@ class LoginActivity : AppCompatActivity() {
             startLogin()
         }
         signup_text.setOnClickListener {
-            supportFragmentManager.beginTransaction().replace(R.id.signup_fragment, SignupFragment(sharedPreferences)).commit()
+            supportFragmentManager.beginTransaction().replace(R.id.signup_fragment, SignupFragment(sharedPreferences, this)).commit()
         }
     }
 
@@ -70,7 +70,8 @@ class LoginActivity : AppCompatActivity() {
         var editor = sharedPreferences.edit()
         editor.putLong("LAST_LOGIN", System.currentTimeMillis()).apply()
         val intent = Intent(this, ListsActivity::class.java)
-        intent.putExtra("email", email)
+        val userStr = "$email-$name"
+        intent.putExtra("user", userStr)
         startActivity(intent)
     }
 
@@ -115,7 +116,7 @@ class LoginActivity : AppCompatActivity() {
         val credential = GoogleAuthProvider.getCredential(googleSignInAccount.idToken, null)
         firebase.signInWithCredential(credential)
             .addOnSuccessListener {
-                val user = User(email = googleSignInAccount.email.toString(), name = googleSignInAccount.givenName.toString())
+                val user = User(googleSignInAccount.email.toString(), googleSignInAccount.givenName.toString())
                 FirebaseManager.getInstance(this).addUser(user)
                 openApp(googleSignInAccount.email.toString(), googleSignInAccount.givenName.toString())
             }
@@ -130,7 +131,7 @@ class LoginActivity : AppCompatActivity() {
     private fun regToDatabase(googleSignInAccount: GoogleSignInAccount) {
         val name = googleSignInAccount.givenName.toString()
         val email = googleSignInAccount.email.toString()
-        thread(start = true) { Repository.getInstance(this).addUser(User(email = email, name = name)) }
+        thread(start = true) { Repository.getInstance(this).addUser(User(email, name)) }
     }
 
     private fun displayToast(text: String) {

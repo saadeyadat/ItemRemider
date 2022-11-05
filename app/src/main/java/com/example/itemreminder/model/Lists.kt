@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "allLists")
 data class Lists(
     @ColumnInfo(name = "name") val name: String,
+    @ColumnInfo(name = "owner") val owner: String,
     @ColumnInfo(name = "image") var image: String? = null
 ) {
     @PrimaryKey(autoGenerate = true)

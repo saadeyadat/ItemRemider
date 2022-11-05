@@ -3,8 +3,6 @@ package com.example.itemreminder.view.activities
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -40,25 +38,32 @@ class ItemsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.items_activity)
         val list = intent.extras!!.getString("list")
+        val userStr = intent.extras!!.getString("user")
+        user_name.text = userStr!!.split("-")[1]
+        user_email.text = userStr!!.split("-")[0]
+        item_name.text = list!!.split('-')[1]
         recyclerView(list!!)
-        clickListen(list!!)
+        clickListen(list!!, userStr!!)
     }
 
-    private fun clickListen(list: String) {
+    private fun clickListen(list: String, userStr: String) {
+        val userEmail = userStr!!.split("-")[0]
+        val userName = userStr!!.split("-")[1]
+        item_name.text = list.split('-')[1]
         add_item.setOnClickListener {
-            val name = editText.text.toString()
+            val name = edit_text.text.toString()
             itemsViewModel.viewModelScope.launch(Dispatchers.IO) {
-                itemsViewModel.addItem(Item(list, name, String(), String()))
+                itemsViewModel.addItem(Item(userEmail, userName, list, name, String(), String()))
             }
-            editText.setText("")
+            edit_text.setText("")
             NotificationsManager.display(this)
         }
     }
 
     private fun recyclerView(list: String) {
-        val adapter = MyAdapter(list, mutableListOf(), this, updateImage()) { displayItemFragment(it) }
-        recyclerView.adapter = adapter
-        itemsViewModel.itemsData.observe(this) { adapter.updateView(it) }
+        val adapter = MyAdapter(list, this, updateImage()) { displayItemFragment(it) }
+        item_recyclerView.adapter = adapter
+        itemsViewModel.itemsData.observe(this) { adapter.setList(it) }
     }
 
     private fun displayItemFragment(item: Item) {

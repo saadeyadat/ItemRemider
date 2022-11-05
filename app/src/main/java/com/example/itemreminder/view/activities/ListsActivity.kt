@@ -2,39 +2,38 @@ package com.example.itemreminder.view.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.example.itemreminder.R
 import com.example.itemreminder.model.Lists
+import com.example.itemreminder.model.User
 import com.example.itemreminder.model.database.Repository
 import com.example.itemreminder.other.adapters.ListsAdapter
+import androidx.fragment.app.Fragment
+import com.example.itemreminder.view.fragments.NewListFragment
 import com.example.itemreminder.viewModel.ListsViewModel
-import kotlinx.android.synthetic.main.items_activity.*
 import kotlinx.android.synthetic.main.lists_activity.*
-import kotlinx.android.synthetic.main.lists_activity.editText
 import kotlin.concurrent.thread
 
 class ListsActivity : AppCompatActivity() {
 
+    private var userString: String = ""
     private val listsViewModel: ListsViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.lists_activity)
-        val email = intent.extras!!.getString("email")
+        val userStr = intent.extras!!.getString("user")
+        userString = userStr!!
         listsRecyclerView()
-        addListToDB(email!!)
+        addListToDB()
     }
 
-    private fun addListToDB(email: String) {
+    private fun addListToDB() {
+        val newListFragment = NewListFragment(userString, this)
         add_list.setOnClickListener {
-            val listName = editText.text.toString()
-            val listID = "$email-$listName"
-            thread(start = true) { Repository.getInstance(this).addList(Lists(listID)) }
-            editText.setText("")
+            supportFragmentManager.beginTransaction().replace(R.id.new_list_fragment, newListFragment).commit()
         }
     }
 

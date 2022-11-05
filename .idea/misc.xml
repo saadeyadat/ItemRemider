@@ -21,18 +21,22 @@
         <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/all_lists_recyclerview.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/empty_layout.xml" value="0.203125" />
         <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/fragment_login.xml" value="0.1" />
+        <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/fragment_new_list_fragment.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/fragment_signup.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/fruit_fragment.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/fruit_info_fragment.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/info_adapter.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/info_recyclerview.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/item_fragment.xml" value="0.13229166666666667" />
         <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/item_fragment_info.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/item_layout.xml" value="0.11145833333333334" />
-        <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/items_activity.xml" value="0.1" />
+        <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/items_activity.xml" value="0.22" />
         <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/lists_activity.xml" value="0.1" />
         <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/lists_adapter.xml" value="0.18" />
         <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/login_activity.xml" value="0.1" />
         <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/my_adapter.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/new_list_fragment.xml" value="0.1" />
+        <entry key="..\:/Users/saad/AndroidStudioProjects/ItemReminderApp/app/src/main/res/layout/signup_fragment.xml" value="0.1" />
       </map>
     </option>
   </component>

@@ -6,6 +6,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "fruitsTable")
 data class Item(
+    @ColumnInfo(name = "email") val email: String,
+    @ColumnInfo(name = "user") val user: String,
     @ColumnInfo(name = "list") val list: String,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "image") var image: String? = null,

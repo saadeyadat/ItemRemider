@@ -1,5 +1,6 @@
 package com.example.itemreminder.view.fragments
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,9 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.itemreminder.R
+import com.example.itemreminder.model.User
+import com.example.itemreminder.model.database.Repository
 import kotlinx.android.synthetic.main.signup_fragment.*
+import kotlin.concurrent.thread
 
-class SignupFragment(private val sharedPreferences: SharedPreferences) : Fragment() {
+class SignupFragment(private val sharedPreferences: SharedPreferences, context: Context) : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,15 +36,7 @@ class SignupFragment(private val sharedPreferences: SharedPreferences) : Fragmen
             save.putString("password+${usersNumber}", signup_password1?.text.toString()).apply()
             save.putInt("usersNumber", usersNumber).apply()
             error_text?.text = ""
-            parentFragmentManager.beginTransaction().remove(this).commit()
-        }
-        else
-            error_text.text = "enter valid username or password"
-    }
-
-    private fun addUserToDatabase() {
-        if (signup_username?.text.toString().length>3 && signup_username?.text.toString()!="" && signup_password1?.text.toString()==signup_password2?.text.toString() && signup_password1?.text.toString()!="" && signup_password1?.text.toString().length>3) {
-            error_text?.text = ""
+            thread(start = true) { Repository.getInstance(context).addUser(User(signup_username?.text.toString(), signup_username?.text.toString())) }
             parentFragmentManager.beginTransaction().remove(this).commit()
         }
         else

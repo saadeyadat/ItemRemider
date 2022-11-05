@@ -21,6 +21,7 @@ class Repository private constructor(application: Context?) {
         }
     }
 
+    //------------- Item Functions -------------//
     fun addItem(item: Item) {
         itemDao.addItem(item)
     }
@@ -47,24 +48,34 @@ class Repository private constructor(application: Context?) {
         return itemDao.getAllItems()
     }
 
+    //------------- Lists Functions -------------//
     fun addList(list: Lists) {
         listsDao.addList(list)
+    }
+
+    fun deleteList(list: Lists) {
+        listsDao.deleteList(list)
     }
 
     fun getAllLists(): LiveData<List<Lists>> {
         return listsDao.getAllLists()
     }
 
+    //------------- User Functions -------------//
     fun addUser(user: User) {
         userDao.addUser(user)
     }
 
-    fun getAllUsers(): LiveData<kotlin.collections.List<User>> {
-        return userDao.getAllUsers()
+    fun addUserList(user: User, list: String) {
+        user.lists += "-$list"
+        updateUser(user)
     }
 
     fun updateUser(user: User) {
         userDao.updateUser(user)
     }
 
+    fun getAllUsers(): LiveData<kotlin.collections.List<User>> {
+        return userDao.getAllUsers()
+    }
 }
