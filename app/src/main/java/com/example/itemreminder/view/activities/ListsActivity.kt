@@ -14,6 +14,7 @@ import com.example.itemreminder.other.adapters.ListsAdapter
 import androidx.fragment.app.Fragment
 import com.example.itemreminder.view.fragments.NewListFragment
 import com.example.itemreminder.viewModel.ListsViewModel
+import com.example.itemreminder.viewModel.UsersViewModel
 import kotlinx.android.synthetic.main.lists_activity.*
 import kotlin.concurrent.thread
 
@@ -21,6 +22,7 @@ class ListsActivity : AppCompatActivity() {
 
     private var userString: String = ""
     private val listsViewModel: ListsViewModel by viewModels()
+    private val usersViewModel: UsersViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.lists_activity)
@@ -38,10 +40,24 @@ class ListsActivity : AppCompatActivity() {
     }
 
     private fun listsRecyclerView() {
+        /*var allLists = mutableListOf<Lists>()
+        var allUsers = mutableListOf<String>()
+        usersViewModel.usersData.observe(this) {
+            for (user in it)
+                allUsers.add(user.email)
+        }*/
+
         val adapter = ListsAdapter(this)
         listsRecyclerView?.adapter = adapter
         listsViewModel.listsData.observe(this, Observer {
-            adapter.setList(it)
+            /*for (list in it)
+                for (user in allUsers)
+                    if (list.owner.split("-")[0]==user)
+                        allLists.add(list)
+                    else if (list.participants != null)
+                            if (list.participants!!.contains(user))
+                                allLists.add(list)*/
+            adapter.setList(it) // it instead of allLists
         })
     }
 

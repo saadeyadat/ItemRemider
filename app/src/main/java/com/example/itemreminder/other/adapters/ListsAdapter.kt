@@ -48,8 +48,7 @@ class ListsAdapter(private val context: Context): RecyclerView.Adapter<ListsAdap
 
         holder.list_name.setOnClickListener {
             val intent = Intent(context, ItemsActivity::class.java)
-            intent.putExtra("list", lists[position].name)
-            intent.putExtra("user", lists[position].owner)
+            intent.putExtra("list", lists[position])
             context.startActivity(intent)
         }
 

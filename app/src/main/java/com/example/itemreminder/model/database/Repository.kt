@@ -57,8 +57,17 @@ class Repository private constructor(application: Context?) {
         listsDao.deleteList(list)
     }
 
+    fun updateList(list: Lists) {
+        listsDao.updateList(list)
+    }
+
     fun getAllLists(): LiveData<List<Lists>> {
         return listsDao.getAllLists()
+    }
+
+    fun addParticipant(list: Lists, participant: String) {
+        list.participants += " - $participant"
+        updateList(list)
     }
 
     //------------- User Functions -------------//
