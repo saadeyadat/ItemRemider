@@ -36,7 +36,7 @@ class SignupFragment(private val sharedPreferences: SharedPreferences, context: 
             save.putString("password+${usersNumber}", signup_password1?.text.toString()).apply()
             save.putInt("usersNumber", usersNumber).apply()
             error_text?.text = ""
-            thread(start = true) { Repository.getInstance(context).addUser(User(signup_username?.text.toString(), signup_username?.text.toString())) }
+            thread(start = true) { Repository.getInstance(context).addUser(User(signup_username?.text.toString()+"@gmail.com", signup_username?.text.toString())) }
             parentFragmentManager.beginTransaction().remove(this).commit()
         }
         else

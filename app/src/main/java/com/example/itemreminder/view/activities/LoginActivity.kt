@@ -53,7 +53,7 @@ class LoginActivity : AppCompatActivity() {
     private fun signIn() {
         signin_button.setOnClickListener {
             if (AppSignin(this).checkUser(sharedPreferences, signin_username.text.toString(), signin_password.text.toString())){
-                openApp(signin_username.text.toString(), signin_username.text.toString())
+                openApp(signin_username.text.toString()+"@gmail.com", signin_username.text.toString())
                 signin_username.setText("")
                 signin_password.setText("")
             }
@@ -106,7 +106,6 @@ class LoginActivity : AppCompatActivity() {
                 }
                 else // if user exist in firebase you can open the app.
                     openApp(googleSignInAccount.email.toString(), googleSignInAccount.givenName.toString())
-
             }
             .addOnFailureListener { displayToast("Failed on Firebase") }
     }

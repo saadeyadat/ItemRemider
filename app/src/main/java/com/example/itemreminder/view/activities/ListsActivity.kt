@@ -20,44 +20,43 @@ import kotlin.concurrent.thread
 
 class ListsActivity : AppCompatActivity() {
 
-    private var userString: String = ""
+    private var user: String = ""
     private val listsViewModel: ListsViewModel by viewModels()
-    private val usersViewModel: UsersViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.lists_activity)
         val userStr = intent.extras!!.getString("user")
-        userString = userStr!!
+        user = userStr!!
         listsRecyclerView()
         addListToDB()
     }
 
     private fun addListToDB() {
-        val newListFragment = NewListFragment(userString, this)
+        val newListFragment = NewListFragment(user, this)
         add_list.setOnClickListener {
             supportFragmentManager.beginTransaction().replace(R.id.new_list_fragment, newListFragment).commit()
         }
     }
 
     private fun listsRecyclerView() {
-        /*var allLists = mutableListOf<Lists>()
-        var allUsers = mutableListOf<String>()
-        usersViewModel.usersData.observe(this) {
-            for (user in it)
-                allUsers.add(user.email)
-        }*/
-
+        var userLists = mutableListOf<Lists>()
         val adapter = ListsAdapter(this)
         listsRecyclerView?.adapter = adapter
         listsViewModel.listsData.observe(this, Observer {
-            /*for (list in it)
-                for (user in allUsers)
-                    if (list.owner.split("-")[0]==user)
-                        allLists.add(list)
-                    else if (list.participants != null)
-                            if (list.participants!!.contains(user))
-                                allLists.add(list)*/
-            adapter.setList(it) // it instead of allLists
+            for (list in it) {
+                var flag = 0
+                for (userList in userLists)
+                    if (userList.name == list.name)
+                        flag++
+                if (list.owner == user && flag == 0)
+                    userLists.add(list)
+                else if (list.participants!!.isNotEmpty()) {
+                    val listArr = list.participants!!.split("-")
+                    if (listArr.contains(" ${user.split("-")[0]}") && flag == 0)
+                        userLists.add(list)
+                }
+            }
+            adapter.setList(userLists) // it instead of allLists
         })
     }
 
