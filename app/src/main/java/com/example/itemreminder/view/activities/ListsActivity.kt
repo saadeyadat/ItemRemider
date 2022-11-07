@@ -8,15 +8,10 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import com.example.itemreminder.R
 import com.example.itemreminder.model.Lists
-import com.example.itemreminder.model.User
-import com.example.itemreminder.model.database.Repository
 import com.example.itemreminder.other.adapters.ListsAdapter
-import androidx.fragment.app.Fragment
 import com.example.itemreminder.view.fragments.NewListFragment
 import com.example.itemreminder.viewModel.ListsViewModel
-import com.example.itemreminder.viewModel.UsersViewModel
 import kotlinx.android.synthetic.main.lists_activity.*
-import kotlin.concurrent.thread
 
 class ListsActivity : AppCompatActivity() {
 
@@ -56,12 +51,11 @@ class ListsActivity : AppCompatActivity() {
                         userLists.add(list)
                 }
             }
-            adapter.setList(userLists) // it instead of allLists
+            adapter.setList(userLists)
         })
     }
 
     //-------------------- logout menu --------------------//
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
         return super.onCreateOptionsMenu(menu)
