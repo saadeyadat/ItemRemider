@@ -3,23 +3,22 @@ package com.example.itemreminder.other.adapters
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.example.itemreminder.R
+import com.example.itemreminder.model.Item
 import com.example.itemreminder.model.Lists
 import com.example.itemreminder.model.database.Repository
 import com.example.itemreminder.other.managers.FirebaseManager
 import com.example.itemreminder.view.activities.ItemsActivity
-import com.example.itemreminder.viewModel.ListsViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlin.concurrent.thread
 
 class ListsAdapter(private val context: Context): RecyclerView.Adapter<ListsAdapter.ViewHolder>() {
 

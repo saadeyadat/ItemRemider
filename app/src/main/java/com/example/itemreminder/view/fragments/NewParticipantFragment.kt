@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment
 import com.example.itemreminder.R
 import com.example.itemreminder.model.Lists
 import com.example.itemreminder.model.database.Repository
+import com.example.itemreminder.other.managers.FirebaseManager
 import kotlinx.android.synthetic.main.item_fragment_info.add_button
 import kotlinx.android.synthetic.main.item_fragment_info.exit_button2
 import kotlinx.android.synthetic.main.new_participant_fragment.*
@@ -19,6 +20,7 @@ class NewParticipantFragment(private val list: Lists, private val allUsers: Muta
             if (allUsers.contains(participant))
                 GlobalScope.launch {
                     Repository.getInstance(context).addParticipant(list, participant)
+                    FirebaseManager.getInstance(requireContext()).updateListParticipants(list)
                 }
             participant_name?.setText("")
             parentFragmentManager.beginTransaction().remove(this).commit()

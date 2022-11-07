@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.itemreminder.model.Item
 import com.example.itemreminder.R
 import com.example.itemreminder.model.database.Repository
+import com.example.itemreminder.other.managers.FirebaseManager
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -52,6 +53,7 @@ class InfoAdapter(private val item: Item, private val context: Context?): Recycl
             infoList.removeAt(holder.layoutPosition)
             item.info = infoList.joinToString(",") // covert back the list to string to save it in the database
             GlobalScope.launch { Repository.getInstance(context).updateItemInfo(item, item.info) }
+            FirebaseManager.getInstance(context).updateItemInfo(item)
             notifyItemRemoved(position)
         }
         alertBuilder.show()

@@ -34,8 +34,8 @@ object ImagesManager {
             override fun onResponse(call: Call<ApiResponse?>, response: Response<ApiResponse?>) {
                 val i = (0..response.body()!!.imagesList.size).random()
                 GlobalScope.launch {
-                    Repository.getInstance(context)
-                        .updateItemImage(item, response.body()!!.imagesList[i].image)
+                    Repository.getInstance(context).updateItemImage(item, response.body()!!.imagesList[i].image)
+                    FirebaseManager.getInstance(context).updateItemImage(item)
                 }
             }
 

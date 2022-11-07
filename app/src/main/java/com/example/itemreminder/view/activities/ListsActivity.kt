@@ -7,9 +7,11 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import com.example.itemreminder.R
+import com.example.itemreminder.model.Item
 import com.example.itemreminder.model.Lists
 import com.example.itemreminder.other.adapters.ListsAdapter
 import com.example.itemreminder.view.fragments.NewListFragment
+import com.example.itemreminder.viewModel.ItemsViewModel
 import com.example.itemreminder.viewModel.ListsViewModel
 import kotlinx.android.synthetic.main.lists_activity.*
 

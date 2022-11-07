@@ -34,6 +34,10 @@ class FirebaseManager private constructor(val context: Context) {
         fireStore.collection("Lists").document(list.name.split("-")[1]).delete()
     }
 
+    fun updateListParticipants(list: Lists) {
+        fireStore.collection("Lists").document(list.name.split("-")[1]).update("participants", list.participants)
+    }
+
     //------------- Item Functions -------------//
     fun addItem(item: Item) {
         fireStore.collection("Items").document(item.name).set(item)
@@ -41,5 +45,13 @@ class FirebaseManager private constructor(val context: Context) {
 
     fun deleteItem(item: Item) {
         fireStore.collection("Items").document(item.name).delete()
+    }
+
+    fun updateItemImage(item: Item) {
+        fireStore.collection("Items").document(item.name).update("image", item.image)
+    }
+
+    fun updateItemInfo(item: Item) {
+        fireStore.collection("Items").document(item.name).update("info", item.info)
     }
 }
