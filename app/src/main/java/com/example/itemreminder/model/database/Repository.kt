@@ -21,6 +21,46 @@ class Repository private constructor(application: Context?) {
         }
     }
 
+    //------------- User Functions -------------//
+    fun addUser(user: User) {
+        userDao.addUser(user)
+    }
+
+    fun addUserList(user: User, list: String) {
+        user.lists += "-$list"
+        updateUser(user)
+    }
+
+    fun updateUser(user: User) {
+        userDao.updateUser(user)
+    }
+
+    fun getAllUsers(): LiveData<kotlin.collections.List<User>> {
+        return userDao.getAllUsers()
+    }
+
+    //------------- Lists Functions -------------//
+    fun addList(list: Lists) {
+        listsDao.addList(list)
+    }
+
+    fun deleteList(list: Lists) {
+        listsDao.deleteList(list)
+    }
+
+    fun updateList(list: Lists) {
+        listsDao.updateList(list)
+    }
+
+    fun getAllLists(): LiveData<List<Lists>> {
+        return listsDao.getAllLists()
+    }
+
+    fun addParticipant(list: Lists, participant: String) {
+        list.participants += " - $participant"
+        updateList(list)
+    }
+
     //------------- Item Functions -------------//
     fun addItem(item: Item) {
         itemDao.addItem(item)
@@ -46,45 +86,5 @@ class Repository private constructor(application: Context?) {
 
     fun getLiveDataAllItems(): LiveData<kotlin.collections.List<Item>> {
         return itemDao.getAllItems()
-    }
-
-    //------------- Lists Functions -------------//
-    fun addList(list: Lists) {
-        listsDao.addList(list)
-    }
-
-    fun deleteList(list: Lists) {
-        listsDao.deleteList(list)
-    }
-
-    fun updateList(list: Lists) {
-        listsDao.updateList(list)
-    }
-
-    fun getAllLists(): LiveData<List<Lists>> {
-        return listsDao.getAllLists()
-    }
-
-    fun addParticipant(list: Lists, participant: String) {
-        list.participants += " - $participant"
-        updateList(list)
-    }
-
-    //------------- User Functions -------------//
-    fun addUser(user: User) {
-        userDao.addUser(user)
-    }
-
-    fun addUserList(user: User, list: String) {
-        user.lists += "-$list"
-        updateUser(user)
-    }
-
-    fun updateUser(user: User) {
-        userDao.updateUser(user)
-    }
-
-    fun getAllUsers(): LiveData<kotlin.collections.List<User>> {
-        return userDao.getAllUsers()
     }
 }

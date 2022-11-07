@@ -9,6 +9,7 @@ import com.example.itemreminder.R
 import com.example.itemreminder.model.Lists
 import com.example.itemreminder.model.User
 import com.example.itemreminder.model.database.Repository
+import com.example.itemreminder.other.managers.FirebaseManager
 import com.example.itemreminder.viewModel.ListsViewModel
 import kotlinx.android.synthetic.main.item_fragment_info.add_button
 import kotlinx.android.synthetic.main.item_fragment_info.exit_button2
@@ -28,6 +29,7 @@ class NewListFragment(private val user: String, context: Context): Fragment(R.la
             GlobalScope.launch {
                 Repository.getInstance(context).addUserList(User(email, name), list)
                 Repository.getInstance(context).addList(Lists("$email-$list", "$email-$name"))
+                FirebaseManager.getInstance(requireContext()).addList(Lists("$email-$list", "$email-$name"))
             }
             list_name?.setText("")
             parentFragmentManager.beginTransaction().remove(this).commit()

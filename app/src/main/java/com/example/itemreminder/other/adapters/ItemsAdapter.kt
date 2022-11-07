@@ -15,14 +15,14 @@ import com.bumptech.glide.Glide
 import com.example.itemreminder.model.Item
 import com.example.itemreminder.model.database.Repository
 import com.example.itemreminder.R
-import kotlinx.android.synthetic.main.items_activity.*
+import com.example.itemreminder.other.managers.FirebaseManager
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class MyAdapter(private val list: String,
-                private val context: Context,
-                val updateImage: (Item) -> Unit, // unit is like void
-                val displayFruitFragment: (Item) -> Unit): RecyclerView.Adapter<MyAdapter.ViewHolder>() {
+class ItemsAdapter(private val list: String,
+                   private val context: Context,
+                   val updateImage: (Item) -> Unit, // unit is like void
+                   val displayFruitFragment: (Item) -> Unit): RecyclerView.Adapter<ItemsAdapter.ViewHolder>() {
 
     private var i = 0 // help to scan all dataList and print items to the correct list
     private var dataList = emptyList<Item>()
@@ -45,7 +45,7 @@ class MyAdapter(private val list: String,
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         if (dataList.size == i) i = 0
         if (dataList[i++].list == list)
-            return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.my_adapter, parent, false))
+            return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.items_adapter, parent, false))
         else
             return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.empty_layout, parent, false))
     }
@@ -81,7 +81,10 @@ class MyAdapter(private val list: String,
         alertBuilder.setMessage("You Will Delete '${dataList[position].name}':  ")
         alertBuilder.setNeutralButton("Cancel") { dialogInterface: DialogInterface, i: Int -> }
         alertBuilder.setPositiveButton("Delete") { dialogInterface: DialogInterface, i: Int ->
-            GlobalScope.launch { Repository.getInstance(context).deleteItem(dataList[position]) }
+            GlobalScope.launch {
+                Repository.getInstance(context).deleteItem(dataList[position])
+                FirebaseManager.getInstance(context).deleteItem(dataList[position])
+            }
             notifyItemRemoved(position)
         }
         alertBuilder.show()

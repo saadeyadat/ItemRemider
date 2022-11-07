@@ -7,14 +7,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.os.bundleOf
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
 import com.example.itemreminder.other.managers.ImagesManager
 import com.example.itemreminder.R
 import com.example.itemreminder.model.Item
 import com.example.itemreminder.model.Lists
-import com.example.itemreminder.other.adapters.MyAdapter
+import com.example.itemreminder.other.adapters.ItemsAdapter
+import com.example.itemreminder.other.managers.FirebaseManager
 import com.example.itemreminder.view.fragments.ItemFragment
 import com.example.itemreminder.other.managers.NotificationsManager
 import com.example.itemreminder.view.fragments.NewParticipantFragment
@@ -64,6 +65,7 @@ class ItemsActivity : AppCompatActivity() {
             itemsViewModel.viewModelScope.launch(Dispatchers.IO) {
                 itemsViewModel.addItem(Item(userEmail, userName, list.name, name, String(), String()))
             }
+            FirebaseManager.getInstance(this).addItem(Item(userEmail, userName, list.name, name, String(), String()))
             edit_text.setText("")
             NotificationsManager.display(this)
         }
@@ -81,7 +83,7 @@ class ItemsActivity : AppCompatActivity() {
     }
 
     private fun recyclerView(list: Lists) {
-        val adapter = MyAdapter(list.name, this, updateImage()) { displayItemFragment(it) }
+        val adapter = ItemsAdapter(list.name, this, updateImage()) { displayItemFragment(it) }
         item_recyclerView.adapter = adapter
         itemsViewModel.itemsData.observe(this) { adapter.setList(it) }
     }

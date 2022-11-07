@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.itemreminder.R
 import com.example.itemreminder.model.Lists
 import com.example.itemreminder.model.database.Repository
+import com.example.itemreminder.other.managers.FirebaseManager
 import com.example.itemreminder.view.activities.ItemsActivity
 import com.example.itemreminder.viewModel.ListsViewModel
 import kotlinx.coroutines.GlobalScope
@@ -70,6 +71,7 @@ class ListsAdapter(private val context: Context): RecyclerView.Adapter<ListsAdap
         alertBuilder.setNeutralButton("Cancel") { dialogInterface: DialogInterface, i: Int -> }
         alertBuilder.setPositiveButton("Delete") { dialogInterface: DialogInterface, i: Int ->
             GlobalScope.launch {
+                FirebaseManager.getInstance(context).deleteList(lists[position])
                 Repository.getInstance(context).deleteList(lists[position])
                 lists.remove(lists[position])
                 notifyDataSetChanged()

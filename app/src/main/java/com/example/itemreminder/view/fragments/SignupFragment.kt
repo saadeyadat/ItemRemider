@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import com.example.itemreminder.R
 import com.example.itemreminder.model.User
 import com.example.itemreminder.model.database.Repository
+import com.example.itemreminder.other.managers.FirebaseManager
 import kotlinx.android.synthetic.main.signup_fragment.*
 import kotlin.concurrent.thread
 
@@ -37,6 +38,7 @@ class SignupFragment(private val sharedPreferences: SharedPreferences, context: 
             save.putInt("usersNumber", usersNumber).apply()
             error_text?.text = ""
             thread(start = true) { Repository.getInstance(context).addUser(User(signup_username?.text.toString()+"@gmail.com", signup_username?.text.toString())) }
+            FirebaseManager.getInstance(requireContext()).addUser(User(signup_username?.text.toString()+"@gmail.com", signup_username?.text.toString()))
             parentFragmentManager.beginTransaction().remove(this).commit()
         }
         else
