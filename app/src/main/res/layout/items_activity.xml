@@ -49,25 +49,26 @@
                 app:layout_constraintTop_toBottomOf="@+id/user_name" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/participants"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/participants_recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:textSize="15sp"
-            android:text="Participants: "
+            android:layout_height="50dp"
+            android:layout_marginEnd="50dp"
+            android:orientation="horizontal"
             android:background="@drawable/user"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/user_info" />
+            app:layout_constraintTop_toBottomOf="@+id/user_info"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         <ImageButton
             android:id="@+id/add_participant"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_margin="10dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
             android:background="@drawable/add"
             app:layout_constraintTop_toBottomOf="@+id/user_info"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/participants_recyclerView" />
 
         <TextView
             android:id="@+id/list_name"
@@ -78,7 +79,7 @@
             android:background="@drawable/title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/participants" />
+            app:layout_constraintTop_toBottomOf="@+id/participants_recyclerView" />
 
         <EditText
             android:id="@+id/edit_text"
