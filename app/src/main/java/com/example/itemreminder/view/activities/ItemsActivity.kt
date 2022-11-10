@@ -13,6 +13,7 @@ import com.example.itemreminder.other.managers.ImagesManager
 import com.example.itemreminder.R
 import com.example.itemreminder.model.Item
 import com.example.itemreminder.model.Lists
+import com.example.itemreminder.model.User
 import com.example.itemreminder.other.adapters.ItemsAdapter
 import com.example.itemreminder.other.adapters.ParticipantsAdapter
 import com.example.itemreminder.other.managers.FirebaseManager
@@ -25,20 +26,28 @@ import com.example.itemreminder.viewModel.UsersViewModel
 import kotlinx.android.synthetic.main.items_activity.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.concurrent.thread
 
 class ItemsActivity : AppCompatActivity() {
 
     private val itemsViewModel: ItemsViewModel by viewModels()
     private val listsViewModel: ListsViewModel by viewModels()
     private val usersViewModel: UsersViewModel by viewModels()
+
     private var currentItem: Item? = null
-    val content = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private val itemContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val uri = result.data?.data
             ImagesManager.getImageResultFromGallery(uri!!, this, currentItem!!)
     }
 
-    private fun updateImage(): (item: Item) -> Unit = { fruit ->
-        currentItem = fruit
+    private var currentUser: User? = null
+    private val userContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val uri = result.data?.data
+        ImagesManager.userImageFromGallery(uri!!, this, currentUser!!)
+    }
+
+    private fun updateImage(): (item: Item) -> Unit = {
+        currentItem = it
         displayAlert(this)
     }
 
@@ -88,7 +97,10 @@ class ItemsActivity : AppCompatActivity() {
             supportFragmentManager.beginTransaction().replace(R.id.new_participant_fragment, newParticipantFragment).commit()
         }
 
-
+        user_image.setOnClickListener {
+            currentUser = User(list.owner.split("-")[0], list.owner.split("-")[0])
+            thread(start = true) { ImagesManager.galleryImage(userContent) }
+        }
     }
 
     private fun participantsRecyclerView(participants: String) {
@@ -123,7 +135,7 @@ class ItemsActivity : AppCompatActivity() {
             }
             alertBuilder.setPositiveButton("Gallery") { dialogInterface: DialogInterface, i: Int ->
                 itemsViewModel.viewModelScope.launch(Dispatchers.IO) {
-                    ImagesManager.galleryImage(content)
+                    ImagesManager.galleryImage(itemContent)
                 }
             }
             alertBuilder.show()

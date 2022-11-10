@@ -31,8 +31,13 @@ class Repository private constructor(application: Context?) {
         updateUser(user)
     }
 
-    fun updateUser(user: User) {
+    private fun updateUser(user: User) {
         userDao.updateUser(user)
+    }
+
+    fun updateUserImage(user: User, image: String) {
+        user.image = image
+        updateUser(user)
     }
 
     fun getAllUsers(): LiveData<kotlin.collections.List<User>> {

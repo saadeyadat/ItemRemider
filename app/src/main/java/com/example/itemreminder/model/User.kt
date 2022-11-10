@@ -15,7 +15,7 @@ data class User (
     @ColumnInfo(name = "lists")
     var lists: String? = null,
     @ColumnInfo(name = "image")
-    val image: String? = null
+    var image: String? = null
 )
 {
     //constructor(): this("", "", ItemsList())

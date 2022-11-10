@@ -10,7 +10,7 @@ data class Lists(
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "owner") val owner: String,
     @ColumnInfo(name = "image") var image: String? = null,
-    @ColumnInfo(name = "participants") var participants: String?
+    @ColumnInfo(name = "participants") var participants: String? = null
 ) : Serializable {
     @PrimaryKey(autoGenerate = true)
     var id = 0
