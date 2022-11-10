@@ -47,7 +47,7 @@ class ListsActivity : AppCompatActivity() {
                         flag++
                 if (list.owner == user && flag == 0)
                     userLists.add(list)
-                else if (list.participants!!.isNotEmpty()) {
+                else if (list.participants != null) {
                     val listArr = list.participants!!.split("-")
                     if (listArr.contains(" ${user.split("-")[0]}") && flag == 0)
                         userLists.add(list)

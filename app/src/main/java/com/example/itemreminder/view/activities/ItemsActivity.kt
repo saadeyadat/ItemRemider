@@ -2,6 +2,7 @@ package com.example.itemreminder.view.activities
 
 import android.content.Context
 import android.content.DialogInterface
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -43,6 +44,7 @@ class ItemsActivity : AppCompatActivity() {
     private var currentUser: User? = null
     private val userContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val uri = result.data?.data
+        user_image.setImageURI(uri)
         ImagesManager.userImageFromGallery(uri!!, this, currentUser!!)
     }
 
@@ -56,15 +58,22 @@ class ItemsActivity : AppCompatActivity() {
         setContentView(R.layout.items_activity)
         val list = intent.extras!!.getSerializable("list") as? Lists
         displayInfo(list!!)
-        participantsRecyclerView(list.participants!!)
         recyclerView(list!!)
         clickListen(list!!)
+        if (list.participants != null)
+            participantsRecyclerView(list.participants!!)
     }
 
     private fun displayInfo(list: Lists) {
         user_name.text = list.owner!!.split("-")[1]
         user_email.text = list.owner!!.split("-")[0]
         list_name.text = list!!.name.split('-')[1]
+        usersViewModel.usersData.observe(this) {
+            for (user in it)
+                if (user.email == list.owner.split("-")[0])
+                    if (user.image != null)
+                        user_image.setImageURI(Uri.parse(user.image))
+        }
     }
 
     private fun clickListen(list: Lists) {
@@ -98,7 +107,11 @@ class ItemsActivity : AppCompatActivity() {
         }
 
         user_image.setOnClickListener {
-            currentUser = User(list.owner.split("-")[0], list.owner.split("-")[0])
+            usersViewModel.usersData.observe(this) {
+                for (user in it)
+                    if (user.email == list.owner.split("-")[0])
+                        currentUser = user
+            }
             thread(start = true) { ImagesManager.galleryImage(userContent) }
         }
     }

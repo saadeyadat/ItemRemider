@@ -53,7 +53,7 @@ class Repository private constructor(application: Context?) {
         listsDao.deleteList(list)
     }
 
-    fun updateList(list: Lists) {
+    private fun updateList(list: Lists) {
         listsDao.updateList(list)
     }
 
