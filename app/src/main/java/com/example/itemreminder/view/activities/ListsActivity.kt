@@ -36,9 +36,13 @@ class ListsActivity : AppCompatActivity() {
     }
 
     private fun listsRecyclerView() {
-        var userLists = mutableListOf<Lists>()
         val adapter = ListsAdapter(this)
         listsRecyclerView?.adapter = adapter
+        adapter.setList(setUserLists())
+    }
+
+    private fun setUserLists(): MutableList<Lists> {
+        var userLists = mutableListOf<Lists>()
         listsViewModel.listsData.observe(this, Observer {
             for (list in it) {
                 var flag = 0
@@ -47,14 +51,15 @@ class ListsActivity : AppCompatActivity() {
                         flag++
                 if (list.owner == user && flag == 0)
                     userLists.add(list)
-                else if (list.participants != null) {
+                else if (list.participants!!.isNotEmpty()) {
                     val listArr = list.participants!!.split("-")
-                    if (listArr.contains(" ${user.split("-")[0]}") && flag == 0)
+                    val userEmail = user.split("-")[0].split("_")[0]
+                    if (listArr.contains(userEmail) && flag == 0)
                         userLists.add(list)
                 }
             }
-            adapter.setList(userLists)
         })
+        return userLists
     }
 
     //-------------------- logout menu --------------------//

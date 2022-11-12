@@ -29,7 +29,7 @@ object ImagesManager {
         GlobalScope.launch { Repository.getInstance(context).updateUserImage(user, uri.toString()) }
     }
 
-    fun getImageResultFromGallery(uri: Uri, context: Context, item: Item) {
+    fun itemImageFromGallery(uri: Uri, context: Context, item: Item) {
         context.contentResolver.takePersistableUriPermission(uri!!, Intent.FLAG_GRANT_READ_URI_PERMISSION)
         GlobalScope.launch { Repository.getInstance(context).updateItemImage(item, uri.toString()) }
     }

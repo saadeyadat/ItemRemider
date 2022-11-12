@@ -33,6 +33,10 @@ class ParticipantsAdapter(private val participantsList: List<String>) : Recycler
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        if (participantsList[position].contains("_")) {
+            val userImage = participantsList[position].split("_")[1]
+            holder.participant_image.setImageURI(Uri.parse(userImage))
+        }
     }
 
     override fun getItemCount(): Int {

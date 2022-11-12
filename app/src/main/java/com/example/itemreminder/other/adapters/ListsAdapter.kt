@@ -73,8 +73,8 @@ class ListsAdapter(private val context: Context): RecyclerView.Adapter<ListsAdap
                 FirebaseManager.getInstance(context).deleteList(lists[position])
                 Repository.getInstance(context).deleteList(lists[position])
                 lists.remove(lists[position])
-                notifyDataSetChanged()
             }
+            notifyDataSetChanged()
             notifyItemRemoved(position)
         }
         alertBuilder.show()

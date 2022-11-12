@@ -62,7 +62,12 @@ class Repository private constructor(application: Context?) {
     }
 
     fun addParticipant(list: Lists, participant: String) {
-        list.participants += " - $participant"
+        list.participants += "$participant-"
+        updateList(list)
+    }
+
+    fun updateParticipants(list: Lists, participants: String) {
+        list.participants = participants
         updateList(list)
     }
 
