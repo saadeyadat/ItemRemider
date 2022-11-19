@@ -18,18 +18,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class NewListFragment(private val user: String, context: Context): Fragment(R.layout.new_list_fragment) {
+class NewListFragment(private val user: User, context: Context): Fragment(R.layout.new_list_fragment) {
 
     override fun onResume() {
         super.onResume()
         add_button?.setOnClickListener {
-            val email = user.split("-")[0]
-            val name = user.split("-")[1]
             val list = list_name.text.toString()
             GlobalScope.launch {
-                Repository.getInstance(context).addUserList(User(email, name), list)
-                Repository.getInstance(context).addList(Lists("$email-$list", "$email-$name"))
-                FirebaseManager.getInstance(requireContext()).addList(Lists("$email-$list", "$email-$name"))
+                Repository.getInstance(context).addUserList(user, list)
+                Repository.getInstance(context).addList(Lists("${user.email}-$list", "${user.email}-${user.name}"))
+                FirebaseManager.getInstance(requireContext()).addList(Lists("${user.email}-$list", "${user.email}-${user.name}"))
             }
             list_name?.setText("")
             parentFragmentManager.beginTransaction().remove(this).commit()

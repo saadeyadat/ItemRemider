@@ -39,12 +39,20 @@ class ItemsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.items_activity)
-        val list = intent.extras!!.getSerializable("list") as? Lists
-        displayInfo(list!!)
-        clickListen(list!!)
-        recyclerView(list!!)
-        if (list.participants!!.isNotEmpty())
-            participantsRecyclerView(list.participants!!)
+        val listID = intent.extras!!.getString("listID")
+        setList(listID!!)
+    }
+
+    private fun setList(listID: String){
+        listsViewModel.listsData.observe(this) {
+            for (list in it)
+                if (list.name == listID) {
+                    displayInfo(list)
+                    clickListen(list)
+                    itemsRecyclerView(list)
+                    participantsRecyclerView(list.participants!!)
+                }
+        }
     }
 
     private fun displayInfo(list: Lists) {
@@ -54,7 +62,7 @@ class ItemsActivity : AppCompatActivity() {
         usersViewModel.usersData.observe(this) {
             for (user in it)
                 if (user.email == list.owner.split("-")[0])
-                    if (user.image != null)
+                    if (user.image!!.isNotEmpty())
                         user_image.setImageURI(Uri.parse(user.image))
         }
     }
@@ -80,13 +88,7 @@ class ItemsActivity : AppCompatActivity() {
 
     private fun addParticipant(list: Lists) {
         val allUsersStr = mutableListOf<String>()
-        var allUsersList = mutableListOf<User>()
-        usersViewModel.usersData.observe(this) {
-            allUsersList = it as MutableList<User>
-            for (user in it)
-                allUsersStr.add(user.email)
-        }
-        val newParticipantFragment = NewParticipantFragment(list, allUsersStr, allUsersList)
+        val newParticipantFragment = NewParticipantFragment(list, allUsersStr)
         supportFragmentManager.beginTransaction().replace(R.id.new_participant_fragment, newParticipantFragment).commit()
     }
 
@@ -99,15 +101,23 @@ class ItemsActivity : AppCompatActivity() {
         thread(start = true) { ImagesManager.galleryImage(userContent) }
     }
 
+
     /* ---------------- RecyclerViews ---------------- */
 
     private fun participantsRecyclerView(participants: String) {
-        val participantsList = participants.split("-")
-        val adapter = ParticipantsAdapter(participantsList)
-        participants_recyclerView.adapter = adapter
+        usersViewModel.usersData.observe(this) {
+            if (participants.isNotEmpty()) {
+                val participantsList = mutableListOf<String>()
+                for (participant in participants.split("-"))
+                    if (participant.length > 2)
+                        participantsList.add(participant)
+                val adapter = ParticipantsAdapter(participantsList, it)
+                participants_recyclerView.adapter = adapter
+            }
+        }
     }
 
-    private fun recyclerView(list: Lists) {
+    private fun itemsRecyclerView(list: Lists) {
         val adapter = ItemsAdapter(list.name, this, updateImage()) { displayItemFragment(it) }
         item_recyclerView.adapter = adapter
         itemsViewModel.itemsData.observe(this) { adapter.setList(it) }
@@ -138,26 +148,6 @@ class ItemsActivity : AppCompatActivity() {
         val uri = result.data?.data
         user_image.setImageURI(uri)
         ImagesManager.userImageFromGallery(uri!!, this, currentUser!!)
-        updateParticipantImage(uri)
-    }
-    private fun updateParticipantImage(uri: Uri) {
-        listsViewModel.listsData.observe(this) {
-            var participantsList = listOf<String>()
-            var newParticipants = ""
-            for (list in it) {
-                if (list.participants!!.isNotEmpty()) {
-                    participantsList = list.participants!!.split("-")
-                    for (participant in participantsList)
-                        if (participant.contains(currentUser!!.email))
-                            newParticipants += participant.split("_")[0] + "_" + uri.toString()
-                        else
-                            newParticipants += list.participants + "-"
-                }
-                thread(start = true) {
-                    Repository.getInstance(this).updateParticipants(list, newParticipants)
-                }
-            }
-        }
     }
 
     private fun displayAlert(context: Context) {

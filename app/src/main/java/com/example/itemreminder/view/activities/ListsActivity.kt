@@ -5,60 +5,63 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.lifecycle.Observer
 import com.example.itemreminder.R
-import com.example.itemreminder.model.Item
 import com.example.itemreminder.model.Lists
+import com.example.itemreminder.model.User
 import com.example.itemreminder.other.adapters.ListsAdapter
 import com.example.itemreminder.view.fragments.NewListFragment
-import com.example.itemreminder.viewModel.ItemsViewModel
 import com.example.itemreminder.viewModel.ListsViewModel
+import com.example.itemreminder.viewModel.UsersViewModel
 import kotlinx.android.synthetic.main.lists_activity.*
 
 class ListsActivity : AppCompatActivity() {
 
-    private var user: String = ""
     private val listsViewModel: ListsViewModel by viewModels()
+    private val usersViewModel: UsersViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.lists_activity)
-        val userStr = intent.extras!!.getString("user")
-        user = userStr!!
-        listsRecyclerView()
-        addListToDB()
+        val userEmail = intent.extras!!.getString("userEmail")
+        setUser(userEmail!!)
     }
 
-    private fun addListToDB() {
+    private fun setUser(userEmail: String) {
+        usersViewModel.usersData.observe(this) {
+            for (user in it)
+                if (user.email == userEmail) {
+                    listsRecyclerView(user)
+                    addNewList(user)
+                }
+        }
+    }
+
+    private fun addNewList(user: User) {
         val newListFragment = NewListFragment(user, this)
         add_list.setOnClickListener {
             supportFragmentManager.beginTransaction().replace(R.id.new_list_fragment, newListFragment).commit()
         }
     }
 
-    private fun listsRecyclerView() {
+    private fun listsRecyclerView(user: User) {
         val adapter = ListsAdapter(this)
         listsRecyclerView?.adapter = adapter
-        adapter.setList(setUserLists())
+        listsViewModel.listsData.observe(this) { adapter.setList(setUserLists(it, user)) }
     }
 
-    private fun setUserLists(): MutableList<Lists> {
+    private fun setUserLists(allLists: List<Lists>, user: User): MutableList<Lists> {
         var userLists = mutableListOf<Lists>()
-        listsViewModel.listsData.observe(this, Observer {
-            for (list in it) {
-                var flag = 0
-                for (userList in userLists)
-                    if (userList.name == list.name)
-                        flag++
-                if (list.owner == user && flag == 0)
-                    userLists.add(list)
-                else if (list.participants!!.isNotEmpty()) {
-                    val listArr = list.participants!!.split("-")
-                    val userEmail = user.split("-")[0].split("_")[0]
-                    if (listArr.contains(userEmail) && flag == 0)
+        for (list in allLists) {
+            var flag = 0
+            for (userList in userLists)
+                if (userList.name == list.name)
+                    flag++
+            if (list.owner.split("-")[0] == user.email && flag == 0)
+                userLists.add(list)
+            else if (list.participants!!.isNotEmpty())
+                    if (list.participants!!.contains(user.email) && flag == 0)
                         userLists.add(list)
-                }
-            }
-        })
+        }
         return userLists
     }
 

@@ -9,7 +9,7 @@ import java.io.Serializable
 data class Lists(
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "owner") val owner: String,
-    @ColumnInfo(name = "image") var image: String? = null,
+    @ColumnInfo(name = "image") var image: String? = "",
     @ColumnInfo(name = "participants") var participants: String? = ""
 ) : Serializable {
     @PrimaryKey(autoGenerate = true)

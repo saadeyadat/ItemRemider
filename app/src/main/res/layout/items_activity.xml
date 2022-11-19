@@ -14,12 +14,22 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" >
 
+        <TextView
+            android:id="@+id/list_name"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textSize="25sp"
+            android:gravity="center"
+            android:background="@drawable/title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <LinearLayout
             android:id="@+id/user_info"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:background="@drawable/user"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/list_name">
 
             <ImageView
                 android:id="@+id/user_image"
@@ -50,16 +60,23 @@
                 app:layout_constraintTop_toBottomOf="@+id/user_name" />
         </LinearLayout>
 
+        <View
+            android:id="@+id/line1"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#c0c0c0"
+            android:layout_marginTop="-10dp"
+            app:layout_constraintTop_toBottomOf="@+id/user_info"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/participants_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginEnd="50dp"
             android:orientation="horizontal"
-            android:background="@drawable/user"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/user_info"
+            app:layout_constraintTop_toBottomOf="@+id/line1"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         <ImageButton
@@ -68,27 +85,23 @@
             android:layout_height="40dp"
             android:layout_margin="5dp"
             android:background="@drawable/add"
-            app:layout_constraintTop_toBottomOf="@+id/user_info"
+            app:layout_constraintTop_toBottomOf="@+id/line1"
             app:layout_constraintStart_toEndOf="@+id/participants_recyclerView" />
 
-        <TextView
-            android:id="@+id/list_name"
+        <View
+            android:id="@+id/line2"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:textSize="25sp"
-            android:gravity="center"
-            android:background="@drawable/title"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/participants_recyclerView" />
+            android:layout_height="2dp"
+            android:background="#c0c0c0"
+            android:layout_marginBottom="5dp"
+            app:layout_constraintTop_toBottomOf="@+id/participants_recyclerView"/>
 
         <EditText
             android:id="@+id/edit_text"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/list_name"
+            app:layout_constraintTop_toBottomOf="@+id/line2"
             android:layout_marginHorizontal="30dp"
-            android:layout_marginTop="20dp"
             app:layout_constraintStart_toStartOf="parent" />
 
 
@@ -97,10 +110,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="30dp"
-            android:layout_marginTop="20dp"
             android:text="Add"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/list_name" />
+            app:layout_constraintTop_toBottomOf="@+id/line2" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/item_recyclerView"

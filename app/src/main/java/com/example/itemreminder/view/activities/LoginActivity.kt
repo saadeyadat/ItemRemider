@@ -23,6 +23,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.login_activity.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
 
 class LoginActivity : AppCompatActivity() {
@@ -53,7 +55,7 @@ class LoginActivity : AppCompatActivity() {
     private fun signIn() {
         signin_button.setOnClickListener {
             if (AppSignin(this).checkUser(sharedPreferences, signin_username.text.toString(), signin_password.text.toString())){
-                openApp(signin_username.text.toString()+"@gmail.com", signin_username.text.toString())
+                openApp(signin_username.text.toString()+"@gmail.com")
                 signin_username.setText("")
                 signin_password.setText("")
             }
@@ -66,12 +68,11 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun openApp(email: String, name: String) {
+    private fun openApp(email: String) {
         var editor = sharedPreferences.edit()
         editor.putLong("LAST_LOGIN", System.currentTimeMillis()).apply()
         val intent = Intent(this, ListsActivity::class.java)
-        val userStr = "$email-$name"
-        intent.putExtra("user", userStr)
+        intent.putExtra("userEmail", email)
         startActivity(intent)
     }
 
@@ -105,7 +106,7 @@ class LoginActivity : AppCompatActivity() {
                     regToFirebase(googleSignInAccount)
                 }
                 else // if user exist in firebase you can open the app.
-                    openApp(googleSignInAccount.email.toString(), googleSignInAccount.givenName.toString())
+                    openApp(googleSignInAccount.email.toString())
             }
             .addOnFailureListener { displayToast("Failed on Firebase") }
     }
@@ -117,7 +118,7 @@ class LoginActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 val user = User(googleSignInAccount.email.toString(), googleSignInAccount.givenName.toString())
                 FirebaseManager.getInstance(this).addUser(user)
-                openApp(googleSignInAccount.email.toString(), googleSignInAccount.givenName.toString())
+                openApp(googleSignInAccount.email.toString())
             }
             .addOnFailureListener { displayToast("try later") }
     }
@@ -130,7 +131,8 @@ class LoginActivity : AppCompatActivity() {
     private fun regToDatabase(googleSignInAccount: GoogleSignInAccount) {
         val name = googleSignInAccount.givenName.toString()
         val email = googleSignInAccount.email.toString()
-        thread(start = true) { Repository.getInstance(this).addUser(User(email, name)) }
+        val context = this
+        GlobalScope.launch { Repository.getInstance(context).addUser(User(email, name)) }
     }
 
     private fun displayToast(text: String) {

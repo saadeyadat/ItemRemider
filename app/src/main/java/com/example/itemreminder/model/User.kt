@@ -13,9 +13,9 @@ data class User (
     @ColumnInfo(name = "name")
     var name: String,
     @ColumnInfo(name = "lists")
-    var lists: String? = null,
+    var lists: String? = "",
     @ColumnInfo(name = "image")
-    var image: String? = null
+    var image: String? = ""
 )
 {
     //constructor(): this("", "", ItemsList())

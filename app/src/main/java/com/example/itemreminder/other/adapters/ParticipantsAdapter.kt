@@ -15,11 +15,12 @@ import com.bumptech.glide.Glide
 import com.example.itemreminder.model.Item
 import com.example.itemreminder.model.database.Repository
 import com.example.itemreminder.R
+import com.example.itemreminder.model.User
 import com.example.itemreminder.other.managers.FirebaseManager
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class ParticipantsAdapter(private val participantsList: List<String>) : RecyclerView.Adapter<ParticipantsAdapter.ViewHolder>() {
+class ParticipantsAdapter(private val participantsList: MutableList<String>, private val usersList: List<User>) : RecyclerView.Adapter<ParticipantsAdapter.ViewHolder>() {
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val participant_image: ImageView
@@ -33,10 +34,11 @@ class ParticipantsAdapter(private val participantsList: List<String>) : Recycler
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (participantsList[position].contains("_")) {
-            val userImage = participantsList[position].split("_")[1]
-            holder.participant_image.setImageURI(Uri.parse(userImage))
-        }
+        for (user in usersList)
+            if (participantsList[position].isNotEmpty())
+                if (participantsList[position] == user.email)
+                    if (user.image!!.isNotEmpty())
+                        holder.participant_image.setImageURI(Uri.parse(user.image))
     }
 
     override fun getItemCount(): Int {

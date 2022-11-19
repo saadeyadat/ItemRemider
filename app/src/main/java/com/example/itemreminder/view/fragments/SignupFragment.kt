@@ -12,6 +12,8 @@ import com.example.itemreminder.model.User
 import com.example.itemreminder.model.database.Repository
 import com.example.itemreminder.other.managers.FirebaseManager
 import kotlinx.android.synthetic.main.signup_fragment.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
 
 class SignupFragment(private val sharedPreferences: SharedPreferences, context: Context) : Fragment() {
@@ -37,7 +39,7 @@ class SignupFragment(private val sharedPreferences: SharedPreferences, context: 
             save.putString("password+${usersNumber}", signup_password1?.text.toString()).apply()
             save.putInt("usersNumber", usersNumber).apply()
             error_text?.text = ""
-            thread(start = true) { Repository.getInstance(context).addUser(User(signup_username?.text.toString()+"@gmail.com", signup_username?.text.toString())) }
+            GlobalScope.launch { Repository.getInstance(context).addUser(User(signup_username?.text.toString()+"@gmail.com", signup_username?.text.toString())) }
             FirebaseManager.getInstance(requireContext()).addUser(User(signup_username?.text.toString()+"@gmail.com", signup_username?.text.toString()))
             parentFragmentManager.beginTransaction().remove(this).commit()
         }
