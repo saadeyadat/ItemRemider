@@ -1,15 +1,19 @@
 package com.example.itemreminder.other.managers
 
 import android.content.Context
+import android.net.Uri
 import com.example.itemreminder.model.Item
 import com.example.itemreminder.model.Lists
 import com.example.itemreminder.model.User
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 
 class FirebaseManager private constructor(val context: Context) {
 
     private val fireStore = Firebase.firestore
+    private val fbStorage = FirebaseStorage.getInstance()
 
     companion object {
         private lateinit var instance: FirebaseManager
@@ -23,6 +27,14 @@ class FirebaseManager private constructor(val context: Context) {
     //------------- User Functions -------------//
     fun addUser(user: User) {
         fireStore.collection("Users").document(user.email!!).set(user)
+    }
+
+    fun addUserImage(uri: Uri, currentUser: User) {
+        fbStorage.reference.child(currentUser.email).putFile(uri)
+    }
+
+    fun getUserImage(currentUser: User): StorageReference {
+        return fbStorage.reference.child(currentUser.email)
     }
 
     //------------- Lists Functions -------------//

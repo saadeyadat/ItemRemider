@@ -2,12 +2,19 @@ package com.example.itemreminder.view.activities
 
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.widget.Button
+import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.lifecycle.viewModelScope
 import com.example.itemreminder.other.managers.ImagesManager
@@ -28,10 +35,12 @@ import com.example.itemreminder.viewModel.UsersViewModel
 import kotlinx.android.synthetic.main.items_activity.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import kotlin.concurrent.thread
 
 class ItemsActivity : AppCompatActivity() {
 
+    var flag = false
     private val itemsViewModel: ItemsViewModel by viewModels()
     private val listsViewModel: ListsViewModel by viewModels()
     private val usersViewModel: UsersViewModel by viewModels()
@@ -40,6 +49,10 @@ class ItemsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.items_activity)
         val listID = intent.extras!!.getString("listID")
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA), 111)
+        else
+            flag = true
         setList(listID!!)
     }
 
@@ -98,7 +111,11 @@ class ItemsActivity : AppCompatActivity() {
                 if (user.email == list.owner.split("-")[0])
                     currentUser = user
         }
-        thread(start = true) { ImagesManager.galleryImage(userContent) }
+
+        if (flag)
+            cameraAlert(this)
+        else
+            userImageAlert(this)
     }
 
 
@@ -140,7 +157,7 @@ class ItemsActivity : AppCompatActivity() {
     }
     private fun updateImage(): (item: Item) -> Unit = {
         currentItem = it
-        displayAlert(this)
+        itemImageAlert(this)
     }
 
     private var currentUser: User? = null
@@ -150,7 +167,13 @@ class ItemsActivity : AppCompatActivity() {
         ImagesManager.userImageFromGallery(uri!!, this, currentUser!!)
     }
 
-    private fun displayAlert(context: Context) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 111 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            flag = true
+    }
+
+    private fun itemImageAlert(context: Context) {
         itemsViewModel.viewModelScope.launch(Dispatchers.Main) {
             val alertBuilder = AlertDialog.Builder(context)
             alertBuilder.setTitle("Change Image")
@@ -167,6 +190,53 @@ class ItemsActivity : AppCompatActivity() {
                 }
             }
             alertBuilder.show()
+        }
+    }
+
+    private fun userImageAlert(context: Context) {
+        usersViewModel.viewModelScope.launch(Dispatchers.Main) {
+            val alertBuilder = AlertDialog.Builder(context)
+            alertBuilder.setTitle("Change Image")
+            alertBuilder.setMessage("Select Image Source:  ")
+            alertBuilder.setNeutralButton("Cancel") { dialogInterface: DialogInterface, i: Int -> }
+            alertBuilder.setPositiveButton("Gallery") { dialogInterface: DialogInterface, i: Int ->
+                usersViewModel.viewModelScope.launch(Dispatchers.IO) {
+                    ImagesManager.galleryImage(userContent)
+                }
+            }
+            alertBuilder.show()
+        }
+    }
+
+    private fun cameraAlert(context: Context) {
+        usersViewModel.viewModelScope.launch(Dispatchers.Main) {
+            val alertBuilder = AlertDialog.Builder(context)
+            alertBuilder.setTitle("Change Image")
+            alertBuilder.setMessage("Select Image Source:  ")
+            alertBuilder.setNeutralButton("Cancel") { dialogInterface: DialogInterface, i: Int -> }
+            alertBuilder.setNegativeButton("Camera") { dialogInterface: DialogInterface, i: Int ->
+                var intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                startActivityForResult(intent, 101)
+            }
+            alertBuilder.setPositiveButton("Gallery") { dialogInterface: DialogInterface, i: Int ->
+                usersViewModel.viewModelScope.launch(Dispatchers.IO) {
+                    ImagesManager.galleryImage(userContent)
+                }
+            }
+            alertBuilder.show()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 101) {
+            var pic = data?.getParcelableExtra<Bitmap>("data")
+            val bytes = ByteArrayOutputStream()
+            pic!!.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+            val path = MediaStore.Images.Media.insertImage(contentResolver, pic, "val", null)
+            val uri = Uri.parse(path)
+            user_image.setImageURI(uri)
+            thread(start = true) { Repository.getInstance(this).updateUserImage(currentUser!!, uri.toString()) }
         }
     }
 }

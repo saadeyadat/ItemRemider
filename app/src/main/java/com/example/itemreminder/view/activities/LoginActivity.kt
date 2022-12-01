@@ -25,24 +25,36 @@ import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.login_activity.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlin.concurrent.thread
 
 class LoginActivity : AppCompatActivity() {
 
+    private val firebase = FirebaseAuth.getInstance()
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var googleContent:  ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_activity)
+        setServiceIntent()
+        setGoogleContent()
+        setSharedPref()
+        lastSigning()
+        signInButtons()
+    }
+
+    private fun setSharedPref() {
+        sharedPreferences = getSharedPreferences(R.string.app_name.toString(), MODE_PRIVATE)
+    }
+
+    private fun setGoogleContent() {
+        googleContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                content -> checkIntent(content)
+        }
+    }
+
+    private fun setServiceIntent() {
         val serviceIntent = Intent(this, ItemService::class.java)
         ContextCompat.startForegroundService(this, serviceIntent)
-        googleContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                content -> googleIntentResult(content)
-        }
-        sharedPreferences = getSharedPreferences(R.string.app_name.toString(), MODE_PRIVATE)
-        lastSigning()
-        signIn()
     }
 
     private fun lastSigning() {
@@ -52,19 +64,21 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
     }
 
-    private fun signIn() {
-        signin_button.setOnClickListener {
-            if (AppSignin(this).checkUser(sharedPreferences, signin_username.text.toString(), signin_password.text.toString())){
-                openApp(signin_username.text.toString()+"@gmail.com")
-                signin_username.setText("")
-                signin_password.setText("")
-            }
-        }
-        google_signin.setOnClickListener {
-            startLogin()
-        }
-        signup_text.setOnClickListener {
+    private fun signInButtons() {
+        regular_signin.setOnClickListener { regularSignIn() }
+        google_signin.setOnClickListener { googleSignIn() }
+        goto_signup.setOnClickListener {
             supportFragmentManager.beginTransaction().replace(R.id.signup_fragment, SignupFragment(sharedPreferences, this)).commit()
+        }
+    }
+
+    private fun regularSignIn() {
+        val username = signin_username.text.toString()
+        val password = signin_password.text.toString()
+        if (AppSignin(this).checkUser(sharedPreferences, username, password)){
+            openApp(signin_username.text.toString()+"@gmail.com")
+            signin_username.setText("")
+            signin_password.setText("")
         }
     }
 
@@ -78,10 +92,7 @@ class LoginActivity : AppCompatActivity() {
 
     /*--------------------------FireBase---------------------------*/
 
-    private val firebase = FirebaseAuth.getInstance()
-    private fun startLogin() {
-        val serviceIntent = Intent(this, ItemService::class.java)
-        ContextCompat.startForegroundService(this, serviceIntent)
+    private fun googleSignIn() {
         val googleOptions = GoogleSignInOptions
             .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
@@ -91,13 +102,13 @@ class LoginActivity : AppCompatActivity() {
         googleContent.launch(client)
     }
 
-    private fun googleIntentResult(content: ActivityResult?) {
+    private fun checkIntent(content: ActivityResult?) {
         val task = GoogleSignIn.getSignedInAccountFromIntent(content?.data)
-        task.addOnSuccessListener{ checkUserExist(it) }
+        task.addOnSuccessListener{ checkUser(it) }
             .addOnFailureListener{ displayToast("Please Sign in regular") }
     }
 
-    private fun checkUserExist(googleSignInAccount: GoogleSignInAccount) {
+    private fun checkUser(googleSignInAccount: GoogleSignInAccount) {
         firebase.fetchSignInMethodsForEmail(googleSignInAccount.email!!)
             .addOnSuccessListener {
                 if (it.signInMethods.isNullOrEmpty()) { // if user is not exist in the firebase, register it in all the databases.
@@ -110,7 +121,6 @@ class LoginActivity : AppCompatActivity() {
             }
             .addOnFailureListener { displayToast("Failed on Firebase") }
     }
-
 
     private fun regToFirebase(googleSignInAccount: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(googleSignInAccount.idToken, null)

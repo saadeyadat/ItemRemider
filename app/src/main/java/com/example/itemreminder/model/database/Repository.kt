@@ -1,16 +1,19 @@
 package com.example.itemreminder.model.database
 
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import com.example.itemreminder.model.Lists
 import com.example.itemreminder.model.Item
 import com.example.itemreminder.model.User
+import com.example.itemreminder.other.managers.FirebaseManager
 
 class Repository private constructor(application: Context?) {
 
     private val itemDao = AppDatabase.getDatabase(application).getItemDao()
     private val userDao = AppDatabase.getDatabase(application).getUserDao()
     private val listsDao = AppDatabase.getDatabase(application).getListsDao()
+    private val firebase = FirebaseManager.getInstance(application!!)
 
     companion object {
         private lateinit var instance: Repository
@@ -42,6 +45,14 @@ class Repository private constructor(application: Context?) {
 
     fun getAllUsers(): LiveData<kotlin.collections.List<User>> {
         return userDao.getAllUsers()
+    }
+
+    fun addUserImageToFB(uri: Uri, currentUser: User) {
+        firebase.addUserImage(uri, currentUser)
+    }
+
+    fun getUserImageToFB(currentUser: User) {
+        firebase.getUserImage(currentUser)
     }
 
     //------------- Lists Functions -------------//

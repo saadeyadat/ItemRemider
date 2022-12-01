@@ -14,7 +14,6 @@ import com.example.itemreminder.other.managers.FirebaseManager
 import kotlinx.android.synthetic.main.signup_fragment.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlin.concurrent.thread
 
 class SignupFragment(private val sharedPreferences: SharedPreferences, context: Context) : Fragment() {
 
@@ -31,19 +30,38 @@ class SignupFragment(private val sharedPreferences: SharedPreferences, context: 
     }
 
     private fun createUser() {
-        var usersNumber = sharedPreferences.getInt("usersNumber", -1)
-        val save = sharedPreferences.edit()
-        if (signup_username?.text.toString().length>3 && signup_username?.text.toString()!="" && signup_password1?.text.toString()==signup_password2?.text.toString() && signup_password1?.text.toString()!="" && signup_password1?.text.toString().length>3) {
-            usersNumber++
-            save.putString("username+${usersNumber}", signup_username?.text.toString()).apply()
-            save.putString("password+${usersNumber}", signup_password1?.text.toString()).apply()
-            save.putInt("usersNumber", usersNumber).apply()
+        val username = signup_username?.text.toString()
+        val password1 = signup_password1?.text.toString()
+        val password2 = signup_password2?.text.toString()
+        if (username.length>3 && username!="" && password1==password2 && password1!="" && password1.length>3) {
+            regToShared()
+            regToDatabase()
+            regToFirebase()
             error_text?.text = ""
-            GlobalScope.launch { Repository.getInstance(context).addUser(User(signup_username?.text.toString()+"@gmail.com", signup_username?.text.toString())) }
-            FirebaseManager.getInstance(requireContext()).addUser(User(signup_username?.text.toString()+"@gmail.com", signup_username?.text.toString()))
             parentFragmentManager.beginTransaction().remove(this).commit()
         }
         else
             error_text.text = "enter valid username or password"
+    }
+
+    private fun regToShared() {
+        var usersNumber = sharedPreferences.getInt("usersNumber", -1)
+        val PrefEdit = sharedPreferences.edit()
+        usersNumber++
+        PrefEdit.putString("username+${usersNumber}", signup_username?.text.toString()).apply()
+        PrefEdit.putString("password+${usersNumber}", signup_password1?.text.toString()).apply()
+        PrefEdit.putInt("usersNumber", usersNumber).apply()
+    }
+
+    private fun regToDatabase() {
+        val email = signup_username?.text.toString()+"@gmail.com"
+        val name = signup_username?.text.toString()
+        GlobalScope.launch { Repository.getInstance(context).addUser(User(email, name)) }
+    }
+
+    private fun regToFirebase() {
+        val email = signup_username?.text.toString()+"@gmail.com"
+        val name = signup_username?.text.toString()
+        FirebaseManager.getInstance(requireContext()).addUser(User(email, name))
     }
 }

@@ -35,7 +35,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
-        android:id="@+id/signup_text"
+        android:id="@+id/goto_signup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Click to Signup"
@@ -51,15 +51,15 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signup_text">
+        app:layout_constraintTop_toBottomOf="@+id/goto_signup">
         <Button
-            android:id="@+id/signin_button"
+            android:id="@+id/regular_signin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Sign in"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/signup_text" />
+            app:layout_constraintTop_toBottomOf="@+id/goto_signup" />
     </LinearLayout>
 
     <com.google.android.gms.common.SignInButton
