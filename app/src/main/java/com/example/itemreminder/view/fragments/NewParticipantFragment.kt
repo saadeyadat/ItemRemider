@@ -12,13 +12,13 @@ import kotlinx.android.synthetic.main.new_participant_fragment.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class NewParticipantFragment(private val list: Lists, private val allUsersStr: MutableList<String>): Fragment(R.layout.new_participant_fragment) {
+class NewParticipantFragment(private val list: Lists, private val allUsers: MutableList<String>): Fragment(R.layout.new_participant_fragment) {
 
     override fun onResume() {
         super.onResume()
         add_button?.setOnClickListener {
             var participant = participant_name.text.toString()
-            if (allUsersStr.contains(participant))  // if the entered participant is an exist user.
+            if (allUsers.contains(participant) && !list.participants!!.contains(participant))  // if the entered participant is an exist user.
                 GlobalScope.launch {
                     Repository.getInstance(context).addParticipant(list, participant)
                     FirebaseManager.getInstance(requireContext()).updateListParticipants(list)

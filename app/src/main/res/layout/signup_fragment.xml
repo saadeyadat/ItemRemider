@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E8D0D0"
+    android:background="@drawable/login"
     tools:context=".view.fragments.SignupFragment">
 
     <TextView
@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:text="Signup "
         android:textSize="100dp"
-        android:textColor="#8E7878" />
+        android:textColor="#CAB6B6" />
 
     <EditText
         android:id="@+id/signup_username"

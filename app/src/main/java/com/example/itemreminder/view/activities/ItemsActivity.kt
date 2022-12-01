@@ -8,8 +8,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.widget.Button
-import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -40,7 +38,9 @@ import kotlin.concurrent.thread
 
 class ItemsActivity : AppCompatActivity() {
 
-    var flag = false
+    var allowCamera = false
+    var allowResult = false
+    var currentActivity = this
     private val itemsViewModel: ItemsViewModel by viewModels()
     private val listsViewModel: ListsViewModel by viewModels()
     private val usersViewModel: UsersViewModel by viewModels()
@@ -49,10 +49,6 @@ class ItemsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.items_activity)
         val listID = intent.extras!!.getString("listID")
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA), 111)
-        else
-            flag = true
         setList(listID!!)
     }
 
@@ -70,7 +66,6 @@ class ItemsActivity : AppCompatActivity() {
 
     private fun displayInfo(list: Lists) {
         user_name.text = list.owner.split("-")[1]
-        user_email.text = list.owner.split("-")[0]
         list_name.text = list.name.split('-')[1]
         usersViewModel.usersData.observe(this) {
             for (user in it)
@@ -100,8 +95,12 @@ class ItemsActivity : AppCompatActivity() {
     }
 
     private fun addParticipant(list: Lists) {
-        val allUsersStr = mutableListOf<String>()
-        val newParticipantFragment = NewParticipantFragment(list, allUsersStr)
+        val allUsers = mutableListOf<String>()
+        val newParticipantFragment = NewParticipantFragment(list, allUsers)
+        usersViewModel.usersData.observe(this) {
+            for (user in it )
+                allUsers.add(user.email)
+        }
         supportFragmentManager.beginTransaction().replace(R.id.new_participant_fragment, newParticipantFragment).commit()
     }
 
@@ -112,10 +111,21 @@ class ItemsActivity : AppCompatActivity() {
                     currentUser = user
         }
 
-        if (flag)
-            cameraAlert(this)
-        else
-            userImageAlert(this)
+        if (ActivityCompat.checkSelfPermission(currentActivity, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)  {
+            ActivityCompat.requestPermissions(currentActivity, arrayOf(android.Manifest.permission.CAMERA), 111)
+            allowResult = true
+        }
+        else {
+            allowCamera = true
+            allowResult = true
+        }
+
+        if (allowResult) {
+            if (allowCamera)
+                cameraAlert(this)
+            else
+                userImageAlert(this)
+        }
     }
 
 
@@ -170,7 +180,7 @@ class ItemsActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 111 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-            flag = true
+            allowCamera = true
     }
 
     private fun itemImageAlert(context: Context) {
@@ -232,11 +242,13 @@ class ItemsActivity : AppCompatActivity() {
         if (requestCode == 101) {
             var pic = data?.getParcelableExtra<Bitmap>("data")
             val bytes = ByteArrayOutputStream()
-            pic!!.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-            val path = MediaStore.Images.Media.insertImage(contentResolver, pic, "val", null)
-            val uri = Uri.parse(path)
-            user_image.setImageURI(uri)
-            thread(start = true) { Repository.getInstance(this).updateUserImage(currentUser!!, uri.toString()) }
+            if (pic != null) {
+                pic!!.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+                val path = MediaStore.Images.Media.insertImage(contentResolver, pic, "val", null)
+                val uri = Uri.parse(path)
+                user_image.setImageURI(uri)
+                thread(start = true) { Repository.getInstance(this).updateUserImage(currentUser!!, uri.toString()) }
+            }
         }
     }
 }
