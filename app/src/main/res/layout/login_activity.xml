@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:text="Click to Signup"
         android:layout_margin="10dp"
-        android:textColor="#8E7878"
+        android:textColor="#CAB6B6"
         app:layout_constraintTop_toBottomOf="@+id/signin_password"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -62,14 +62,25 @@
             app:layout_constraintTop_toBottomOf="@+id/goto_signup" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/other_method"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="or Sign in with"
+        android:textColor="#CAB6B6"
+        app:layout_constraintTop_toBottomOf="@+id/signin_button2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <com.google.android.gms.common.SignInButton
         android:id="@+id/google_signin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signin_button2" />
+        app:layout_constraintTop_toBottomOf="@+id/other_method" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/signup_fragment"
