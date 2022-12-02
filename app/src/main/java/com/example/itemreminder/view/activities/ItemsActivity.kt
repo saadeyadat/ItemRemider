@@ -91,7 +91,7 @@ class ItemsActivity : AppCompatActivity() {
         }
         FirebaseManager.getInstance(this).addItem(Item(userEmail, userName, list.name, name, String(), String()))
         edit_text.setText("")
-        NotificationsManager.display(this)
+        NotificationsManager.newItem(this, list.name.split("-")[1])
     }
 
     private fun addParticipant(list: Lists) {

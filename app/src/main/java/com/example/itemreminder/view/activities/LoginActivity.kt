@@ -35,7 +35,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_activity)
-        setServiceIntent()
         setGoogleContent()
         setSharedPref()
         lastSigning()
@@ -50,11 +49,6 @@ class LoginActivity : AppCompatActivity() {
         googleContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 content -> checkIntent(content)
         }
-    }
-
-    private fun setServiceIntent() {
-        val serviceIntent = Intent(this, ItemService::class.java)
-        ContextCompat.startForegroundService(this, serviceIntent)
     }
 
     private fun lastSigning() {

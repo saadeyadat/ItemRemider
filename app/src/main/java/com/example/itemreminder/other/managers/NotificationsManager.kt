@@ -25,23 +25,33 @@ object NotificationsManager {
         notificationManager.createNotificationChannel(channel)
     }
 
-    fun display(context: Context) {
+    fun newItem(context: Context, list: String) {
         createNotificationChanel(context)
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setContentTitle("Item Reminder")
+            .setContentTitle("ItemReminder")
             .setSmallIcon(R.drawable.cart)
-            .setContentText("New Item Added")
+            .setContentText("New Item Added To $list.")
         val notificationManagerCompat = NotificationManagerCompat.from(context)
         notificationManagerCompat.notify(2, builder.build())
     }
 
-    fun serviceNotification(context: Context): Notification {
+    fun newList(context: Context, user: String) {
+        createNotificationChanel(context)
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setContentTitle("ItemReminder")
+            .setSmallIcon(R.drawable.cart)
+            .setContentText("$user Added New List.")
+        val notificationManagerCompat = NotificationManagerCompat.from(context)
+        notificationManagerCompat.notify(2, builder.build())
+    }
+
+    fun background(context: Context): Notification {
         val sendIntent = PendingIntent.getActivity(context, 0, Intent(context, LoginActivity::class.java), PendingIntent.FLAG_MUTABLE)
         createNotificationChanel(context)
         return NotificationCompat.Builder(context, CHANNEL_ID)
-            .setContentTitle("Service Notification")
+            .setContentTitle("ItemReminder")
             .setSmallIcon(R.drawable.cart)
             .setContentIntent(sendIntent)
-            .setContentText("I'm still working in background").build()
+            .setContentText("I'm still working, Click me...").build()
     }
 }

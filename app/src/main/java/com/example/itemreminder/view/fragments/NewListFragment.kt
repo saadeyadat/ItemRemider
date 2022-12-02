@@ -10,6 +10,7 @@ import com.example.itemreminder.model.Lists
 import com.example.itemreminder.model.User
 import com.example.itemreminder.model.database.Repository
 import com.example.itemreminder.other.managers.FirebaseManager
+import com.example.itemreminder.other.managers.NotificationsManager
 import com.example.itemreminder.viewModel.ListsViewModel
 import kotlinx.android.synthetic.main.item_fragment_info.add_button
 import kotlinx.android.synthetic.main.item_fragment_info.exit_button2
@@ -28,6 +29,7 @@ class NewListFragment(private val user: User, context: Context): Fragment(R.layo
                 Repository.getInstance(context).addUserList(user, list)
                 Repository.getInstance(context).addList(Lists("${user.email}-$list", "${user.email}-${user.name}"))
                 FirebaseManager.getInstance(requireContext()).addList(Lists("${user.email}-$list", "${user.email}-${user.name}"))
+                NotificationsManager.newList(requireContext(), user.name)
             }
             list_name?.setText("")
             parentFragmentManager.beginTransaction().remove(this).commit()

@@ -1,14 +1,18 @@
 package com.example.itemreminder.view.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import com.example.itemreminder.R
 import com.example.itemreminder.model.Lists
 import com.example.itemreminder.model.User
 import com.example.itemreminder.other.adapters.ListsAdapter
+import com.example.itemreminder.other.managers.NotificationsManager
+import com.example.itemreminder.other.service.ItemService
 import com.example.itemreminder.view.fragments.NewListFragment
 import com.example.itemreminder.viewModel.ListsViewModel
 import com.example.itemreminder.viewModel.UsersViewModel
@@ -73,6 +77,8 @@ class ListsActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.logout) {
+            val serviceIntent = Intent(this, ItemService::class.java)
+            ContextCompat.startForegroundService(this, serviceIntent)
             this.finish()
             return true
         }

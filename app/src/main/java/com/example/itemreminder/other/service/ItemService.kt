@@ -14,7 +14,7 @@ class ItemService: Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val notification = NotificationsManager.serviceNotification(this)
+        val notification = NotificationsManager.background(this)
         startForeground(1, notification)
         startService()
         return super.onStartCommand(intent, flags, startId)
