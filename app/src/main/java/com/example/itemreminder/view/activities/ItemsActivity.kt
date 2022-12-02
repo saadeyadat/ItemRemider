@@ -26,6 +26,7 @@ import com.example.itemreminder.other.adapters.ParticipantsAdapter
 import com.example.itemreminder.other.managers.FirebaseManager
 import com.example.itemreminder.view.fragments.ItemFragment
 import com.example.itemreminder.other.managers.NotificationsManager
+import com.example.itemreminder.view.fragments.DeleteParticipantFragment
 import com.example.itemreminder.view.fragments.NewParticipantFragment
 import com.example.itemreminder.viewModel.ItemsViewModel
 import com.example.itemreminder.viewModel.ListsViewModel
@@ -78,6 +79,7 @@ class ItemsActivity : AppCompatActivity() {
     private fun clickListen(list: Lists) {
         add_item.setOnClickListener { addItem(list) }
         add_participant.setOnClickListener { addParticipant(list) }
+        delete_participant.setOnClickListener { deleteParticipant(list) }
         user_image.setOnClickListener { addUserImage(list) }
     }
 
@@ -102,6 +104,11 @@ class ItemsActivity : AppCompatActivity() {
                 allUsers.add(user.email)
         }
         supportFragmentManager.beginTransaction().replace(R.id.new_participant_fragment, newParticipantFragment).commit()
+    }
+
+    private fun deleteParticipant(list: Lists) {
+        val deleteParticipantFragment = DeleteParticipantFragment(list)
+        supportFragmentManager.beginTransaction().replace(R.id.delete_participant_fragment, deleteParticipantFragment).commit()
     }
 
     private fun addUserImage(list: Lists) {

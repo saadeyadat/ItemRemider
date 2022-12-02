@@ -62,7 +62,7 @@
             android:id="@+id/participants_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginEnd="50dp"
+            android:layout_marginEnd="85dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -77,6 +77,15 @@
             android:background="@drawable/add"
             app:layout_constraintTop_toBottomOf="@+id/line1"
             app:layout_constraintStart_toEndOf="@+id/participants_recyclerView" />
+
+        <ImageButton
+            android:id="@+id/delete_participant"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="7dp"
+            android:background="@drawable/minus"
+            app:layout_constraintTop_toBottomOf="@+id/line1"
+            app:layout_constraintStart_toEndOf="@+id/add_participant" />
 
         <View
             android:id="@+id/line2"
@@ -124,6 +133,15 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/new_participant_fragment"
+            android:layout_width="250dp"
+            android:layout_height="170dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/delete_participant_fragment"
             android:layout_width="250dp"
             android:layout_height="170dp"
             app:layout_constraintTop_toTopOf="parent"
