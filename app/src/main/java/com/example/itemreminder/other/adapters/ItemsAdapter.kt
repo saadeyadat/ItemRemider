@@ -10,16 +10,20 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.itemreminder.model.Item
 import com.example.itemreminder.model.database.Repository
 import com.example.itemreminder.R
+import com.example.itemreminder.model.Lists
 import com.example.itemreminder.other.managers.FirebaseManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class ItemsAdapter(private val list: String,
+class ItemsAdapter(private val list: Lists,
+                   private val currentUserEmail: String,
                    private val context: Context,
                    val updateImage: (Item) -> Unit, // unit is like void
                    val displayFruitFragment: (Item) -> Unit): RecyclerView.Adapter<ItemsAdapter.ViewHolder>() {
@@ -44,7 +48,7 @@ class ItemsAdapter(private val list: String,
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         if (dataList.size == i) i = 0
-        if (dataList[i++].list == list)
+        if (dataList[i++].list == list.name)
             return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.items_adapter, parent, false))
         else
             return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.empty_layout, parent, false))
@@ -59,7 +63,10 @@ class ItemsAdapter(private val list: String,
             holder.item_image.setImageURI(Uri.parse(dataList[position].image))
 
         holder.delete.setOnClickListener {
-            displayAlert(context, position)
+            if (currentUserEmail == list.owner.split("-")[0])
+                displayAlert(context, position)
+            else
+                onlyOwnerAllowedAlert()
         }
 
         holder.item_name.setOnClickListener {
@@ -67,7 +74,10 @@ class ItemsAdapter(private val list: String,
         }
 
         holder.item_image.setOnClickListener {
-            updateImage(dataList[position])
+            if (currentUserEmail == list.owner.split("-")[0])
+                updateImage(dataList[position])
+            else
+                onlyOwnerAllowedAlert()
         }
     }
 
@@ -87,6 +97,14 @@ class ItemsAdapter(private val list: String,
             }
             notifyItemRemoved(position)
         }
+        alertBuilder.show()
+    }
+
+    private fun onlyOwnerAllowedAlert() {
+        val alertBuilder = AlertDialog.Builder(context)
+        alertBuilder.setTitle("Alert")
+        alertBuilder.setMessage("Only List Owner Can Edit This Field.")
+        alertBuilder.setPositiveButton("OK") { dialogInterface: DialogInterface, i: Int -> }
         alertBuilder.show()
     }
 }

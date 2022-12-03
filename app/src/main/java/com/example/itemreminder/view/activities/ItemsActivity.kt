@@ -91,12 +91,17 @@ class ItemsActivity : AppCompatActivity() {
         val userName = list.owner.split("-")[1]
         val name = edit_text.text.toString()
         val item = Item(userEmail, userName, list.name, name, String(), String())
-        itemsViewModel.viewModelScope.launch(Dispatchers.IO) {
-            itemsViewModel.addItem(item)
+        if (currentUserEmail == list.owner.split("-")[0]) {
+            itemsViewModel.viewModelScope.launch(Dispatchers.IO) {
+                itemsViewModel.addItem(item)
+            }
+            FirebaseManager.getInstance(this)
+                .addItem(Item(userEmail, userName, list.name, name, String(), String()))
+            edit_text.setText("")
+            NotificationsManager.newItem(this, list.name.split("-")[1])
         }
-        FirebaseManager.getInstance(this).addItem(Item(userEmail, userName, list.name, name, String(), String()))
-        edit_text.setText("")
-        NotificationsManager.newItem(this, list.name.split("-")[1])
+        else
+            onlyOwnerAllowedAlert(this)
     }
 
     private fun addParticipant(list: Lists) {
@@ -165,7 +170,7 @@ class ItemsActivity : AppCompatActivity() {
     }
 
     private fun itemsRecyclerView(list: Lists) {
-        val adapter = ItemsAdapter(list.name, this, updateImage()) { displayItemFragment(it) }
+        val adapter = ItemsAdapter(list, currentUserEmail, this, updateImage()) { displayItemFragment(it) }
         item_recyclerView.adapter = adapter
         itemsViewModel.itemsData.observe(this) { adapter.setList(it) }
     }
@@ -201,6 +206,43 @@ class ItemsActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 111 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
             allowCamera = true
+    }
+
+
+    /* ---------------- Camera Images Update ---------------- */
+
+    private fun cameraAlert(context: Context) {
+        usersViewModel.viewModelScope.launch(Dispatchers.Main) {
+            val alertBuilder = AlertDialog.Builder(context)
+            alertBuilder.setTitle("Change Image")
+            alertBuilder.setMessage("Select Image Source:  ")
+            alertBuilder.setNeutralButton("Cancel") { dialogInterface: DialogInterface, i: Int -> }
+            alertBuilder.setNegativeButton("Camera") { dialogInterface: DialogInterface, i: Int ->
+                var intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                startActivityForResult(intent, 101)
+            }
+            alertBuilder.setPositiveButton("Gallery") { dialogInterface: DialogInterface, i: Int ->
+                usersViewModel.viewModelScope.launch(Dispatchers.IO) {
+                    ImagesManager.galleryImage(userContent)
+                }
+            }
+            alertBuilder.show()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 101) {
+            var pic = data?.getParcelableExtra<Bitmap>("data")
+            val bytes = ByteArrayOutputStream()
+            if (pic != null) {
+                pic!!.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+                val path = MediaStore.Images.Media.insertImage(contentResolver, pic, "val", null)
+                val uri = Uri.parse(path)
+                user_image.setImageURI(uri)
+                thread(start = true) { Repository.getInstance(this).updateUserImage(currentUser!!, uri.toString()) }
+            }
+        }
     }
 
 
@@ -251,40 +293,4 @@ class ItemsActivity : AppCompatActivity() {
         }
     }
 
-
-    /* ---------------- Camera Image ---------------- */
-
-    private fun cameraAlert(context: Context) {
-        usersViewModel.viewModelScope.launch(Dispatchers.Main) {
-            val alertBuilder = AlertDialog.Builder(context)
-            alertBuilder.setTitle("Change Image")
-            alertBuilder.setMessage("Select Image Source:  ")
-            alertBuilder.setNeutralButton("Cancel") { dialogInterface: DialogInterface, i: Int -> }
-            alertBuilder.setNegativeButton("Camera") { dialogInterface: DialogInterface, i: Int ->
-                var intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                startActivityForResult(intent, 101)
-            }
-            alertBuilder.setPositiveButton("Gallery") { dialogInterface: DialogInterface, i: Int ->
-                usersViewModel.viewModelScope.launch(Dispatchers.IO) {
-                    ImagesManager.galleryImage(userContent)
-                }
-            }
-            alertBuilder.show()
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 101) {
-            var pic = data?.getParcelableExtra<Bitmap>("data")
-            val bytes = ByteArrayOutputStream()
-            if (pic != null) {
-                pic!!.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-                val path = MediaStore.Images.Media.insertImage(contentResolver, pic, "val", null)
-                val uri = Uri.parse(path)
-                user_image.setImageURI(uri)
-                thread(start = true) { Repository.getInstance(this).updateUserImage(currentUser!!, uri.toString()) }
-            }
-        }
-    }
 }
