@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.itemreminder.R
 import com.example.itemreminder.model.Item
 import com.example.itemreminder.model.Lists
+import com.example.itemreminder.model.User
 import com.example.itemreminder.model.database.Repository
 import com.example.itemreminder.other.managers.FirebaseManager
 import com.example.itemreminder.view.activities.ItemsActivity
@@ -20,10 +21,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
 
-class ListsAdapter(private val context: Context): RecyclerView.Adapter<ListsAdapter.ViewHolder>() {
+class ListsAdapter(private val context: Context, private val user: User): RecyclerView.Adapter<ListsAdapter.ViewHolder>() {
 
     private var lists = mutableListOf<Lists>()
-    fun setList(list: MutableList<Lists> ) {
+    fun setList(list: MutableList<Lists>) {
         this.lists = list
         notifyDataSetChanged()
     }
@@ -51,6 +52,7 @@ class ListsAdapter(private val context: Context): RecyclerView.Adapter<ListsAdap
         holder.list_name.setOnClickListener {
             val intent = Intent(context, ItemsActivity::class.java)
             intent.putExtra("listID", lists[position].name)
+            intent.putExtra("userEmail", user.email)
             context.startActivity(intent)
         }
 

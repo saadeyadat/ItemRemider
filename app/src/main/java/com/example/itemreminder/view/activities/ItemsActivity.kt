@@ -42,6 +42,7 @@ class ItemsActivity : AppCompatActivity() {
     var allowCamera = false
     var allowResult = false
     var currentActivity = this
+    var currentUserEmail = ""
     private val itemsViewModel: ItemsViewModel by viewModels()
     private val listsViewModel: ListsViewModel by viewModels()
     private val usersViewModel: UsersViewModel by viewModels()
@@ -50,6 +51,8 @@ class ItemsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.items_activity)
         val listID = intent.extras!!.getString("listID")
+        val userEmail = intent.extras!!.getString("userEmail")
+        currentUserEmail = userEmail!!
         setList(listID!!)
     }
 
@@ -103,12 +106,18 @@ class ItemsActivity : AppCompatActivity() {
             for (user in it )
                 allUsers.add(user.email)
         }
-        supportFragmentManager.beginTransaction().replace(R.id.new_participant_fragment, newParticipantFragment).commit()
+        if (currentUserEmail == list.owner.split("-")[0])
+            supportFragmentManager.beginTransaction().replace(R.id.new_participant_fragment, newParticipantFragment).commit()
+        else
+            onlyOwnerAllowedAlert(this)
     }
 
     private fun deleteParticipant(list: Lists) {
         val deleteParticipantFragment = DeleteParticipantFragment(list)
-        supportFragmentManager.beginTransaction().replace(R.id.delete_participant_fragment, deleteParticipantFragment).commit()
+        if (currentUserEmail == list.owner.split("-")[0])
+            supportFragmentManager.beginTransaction().replace(R.id.delete_participant_fragment, deleteParticipantFragment).commit()
+        else
+            onlyOwnerAllowedAlert(this)
     }
 
     private fun addUserImage(list: Lists) {
@@ -127,12 +136,16 @@ class ItemsActivity : AppCompatActivity() {
             allowResult = true
         }
 
-        if (allowResult) {
-            if (allowCamera)
-                cameraAlert(this)
-            else
-                userImageAlert(this)
+        if (currentUserEmail == list.owner.split("-")[0]) {
+            if (allowResult) {
+                if (allowCamera)
+                    cameraAlert(this)
+                else
+                    userImageAlert(this)
+            }
         }
+        else
+                onlyOwnerAllowedAlert(this)
     }
 
 
@@ -190,6 +203,9 @@ class ItemsActivity : AppCompatActivity() {
             allowCamera = true
     }
 
+
+    /* ---------------- Alerts ---------------- */
+
     private fun itemImageAlert(context: Context) {
         itemsViewModel.viewModelScope.launch(Dispatchers.Main) {
             val alertBuilder = AlertDialog.Builder(context)
@@ -224,6 +240,19 @@ class ItemsActivity : AppCompatActivity() {
             alertBuilder.show()
         }
     }
+
+    private fun onlyOwnerAllowedAlert(context: Context) {
+        usersViewModel.viewModelScope.launch(Dispatchers.Main) {
+            val alertBuilder = AlertDialog.Builder(context)
+            alertBuilder.setTitle("Alert")
+            alertBuilder.setMessage("Only List Owner Can Edit This Field.")
+            alertBuilder.setPositiveButton("OK") { dialogInterface: DialogInterface, i: Int -> }
+            alertBuilder.show()
+        }
+    }
+
+
+    /* ---------------- Camera Image ---------------- */
 
     private fun cameraAlert(context: Context) {
         usersViewModel.viewModelScope.launch(Dispatchers.Main) {

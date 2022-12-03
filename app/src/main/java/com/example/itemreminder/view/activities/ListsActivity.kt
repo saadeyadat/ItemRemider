@@ -48,7 +48,7 @@ class ListsActivity : AppCompatActivity() {
     }
 
     private fun listsRecyclerView(user: User) {
-        val adapter = ListsAdapter(this)
+        val adapter = ListsAdapter(this, user)
         listsRecyclerView?.adapter = adapter
         listsViewModel.listsData.observe(this) { adapter.setList(setUserLists(it, user)) }
     }
