@@ -1,9 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
 
-    <item
-        android:title="Logout"
-        android:id="@+id/logout" />
+    <group android:id="@+id/grp1">
+        <item
+            android:id="@+id/home"
+            android:icon="@drawable/home"
+            android:title="Home" />
 
-    <item android:title="About" />
+        <item
+            android:id="@+id/all_users"
+            android:icon="@drawable/user_image"
+            android:title="All Users" />
+
+    </group>
+
+    <group android:id="@+id/grp2">
+        <item
+            android:id="@+id/about"
+            android:icon="@drawable/about"
+            android:title="About" />
+
+        <item
+            android:id="@+id/logout"
+            android:icon="@drawable/logout"
+            android:title="Logout" />
+    </group>
+
 </menu>

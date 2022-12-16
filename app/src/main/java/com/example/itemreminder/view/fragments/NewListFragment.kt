@@ -29,7 +29,7 @@ class NewListFragment(private val user: User, context: Context): Fragment(R.layo
                 Repository.getInstance(context).addUserList(user, list)
                 Repository.getInstance(context).addList(Lists("${user.email}-$list", "${user.email}-${user.name}"))
                 FirebaseManager.getInstance(requireContext()).addList(Lists("${user.email}-$list", "${user.email}-${user.name}"))
-                NotificationsManager.newList(requireContext(), user.name)
+                //NotificationsManager.newList(requireContext(), user.name)
             }
             list_name?.setText("")
             parentFragmentManager.beginTransaction().remove(this).commit()

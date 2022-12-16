@@ -8,14 +8,12 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.example.itemreminder.R
 import com.example.itemreminder.model.User
 import com.example.itemreminder.model.database.Repository
 import com.example.itemreminder.other.managers.FirebaseManager
 import com.example.itemreminder.other.managers.SharedPrefManager
 import com.example.itemreminder.other.register.AppSignin
-import com.example.itemreminder.other.service.ItemService
 import com.example.itemreminder.view.fragments.SignupFragment
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -67,11 +65,11 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun regularSignIn() {
-        val username = signin_username.text.toString()
+        val username = signin_email.text.toString()
         val password = signin_password.text.toString()
         if (AppSignin(this).checkUser(sharedPreferences, username, password)){
-            openApp(signin_username.text.toString()+"@gmail.com")
-            signin_username.setText("")
+            openApp(signin_email.text.toString())
+            signin_email.setText("")
             signin_password.setText("")
         }
     }

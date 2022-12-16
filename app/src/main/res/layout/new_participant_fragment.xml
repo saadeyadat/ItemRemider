@@ -52,7 +52,7 @@
             android:layout_height="60dp"
             android:layout_marginTop="10dp"
             android:textSize="10sp"
-            android:text="Note: To Add Regular Signed User Type : 'username + @gmail.com'"
+            android:text="Note: The Added User Will Be Able To See List Content Only."
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/participant_name" />
